@@ -1,14 +1,23 @@
+# -*- shell-script -*-
 # Prompt setup
+
+if [ -f /usr/local/git/current/share/git-core/git-prompt.sh ]; then
+    . /usr/local/git/current/share/git-core/git-prompt.sh
+else
+  function __git_ps1() {
+    echo -n ""
+  }
+fi
 
 # Truncate a pathname that is longer than $PROMPT_DIRTRIM elements long;
 # otherwise, return the original unchanged.
 function truncate_path() {
   local path_components=($(echo $1 | tr "/" " "))
   local end_path=""
-  if [[ -v PROMPT_DIRTRIM && ${#path_components[@]} -gt $PROMPT_DIRTRIM ]]; then
+  if [[ ("${PROMPT_DIRTRIM}" != "") && (${#path_components[@]} -gt $PROMPT_DIRTRIM) ]]; then
     end_path="..."
     for (( i=-${PROMPT_DIRTRIM}; $i <= -1; ++i )); do
-      end_path="${end_path}/${path_components[$i]}"
+      end_path="${end_path}/${path_components[${#path_components[@]} + $i]}"
     done
   else
     end_path=$1;
@@ -24,8 +33,11 @@ function truncate_path() {
 function get_condensed_path() {
   if [[ $PWD =~ ${HOME}/?(.*)? ]]; then
     local truncated=$(truncate_path ${BASH_REMATCH[1]})
+    local git_branch=$(__git_ps1 "(%s)")
     if [[ -z "$truncated" ]]; then
       DISPLAY_PATH="~"
+    elif [[ ! -z "$git_branch" ]]; then
+      DISPLAY_PATH=":${git_branch}:${truncated}"
     else
       DISPLAY_PATH="~/${truncated}"
     fi

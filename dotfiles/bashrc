@@ -1,4 +1,4 @@
-
+# -*- shell-script -*-
 # If not running interactively, then don't do anything
 [ -z "$PS1" ] && return
 
@@ -36,9 +36,6 @@ alias com=gzip
 alias uc=gunzip
 alias h=history
 
-# General shell functions (essentially aliases)
-ll() { ls -lahF --color=always "$@" | less -EFmQRX ; }
-lf() { ls -lhF --color=always "$@" | less -EFmQRX ; }
 push() { pushd . ; }
 pop() { popd ; }
 perm() { chmod -R go+rX . ; }
