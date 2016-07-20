@@ -1,0 +1,4 @@
+# General shell functions (essentially aliases)
+export CLICOLOR_FORCE=1
+ll() { ls -lahFG "$@" | less -EFmQRX ; }
+lf() { ls -lhFG "$@" | less -EFmQRX ; }

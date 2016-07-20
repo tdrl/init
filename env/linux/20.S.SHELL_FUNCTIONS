@@ -1,0 +1,3 @@
+# General shell functions (essentially aliases)
+ll() { ls -lahF --color=always "$@" | less -EFmQRX ; }
+lf() { ls -lhF --color=always "$@" | less -EFmQRX ; }
