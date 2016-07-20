@@ -1,0 +1,68 @@
+# Prompt setup
+
+# Truncate a pathname that is longer than $PROMPT_DIRTRIM elements long;
+# otherwise, return the original unchanged.
+function truncate_path() {
+  local path_components=($(echo $1 | tr "/" " "))
+  local end_path=""
+  if [[ -v PROMPT_DIRTRIM && ${#path_components[@]} -gt $PROMPT_DIRTRIM ]]; then
+    end_path="..."
+    for (( i=-${PROMPT_DIRTRIM}; $i <= -1; ++i )); do
+      end_path="${end_path}/${path_components[$i]}"
+    done
+  else
+    end_path=$1;
+  fi
+  echo $end_path
+}
+
+# Intelligently rewrite the current working directory for display.  This:
+#   - Replaces the home directory with ~
+#   - Replaces CitC clients with :clientname://
+#   - Leaves other paths unchanged
+# and truncates any paths longer than $PROMPT_DIRTRIM elements long.
+function get_condensed_path() {
+  if [[ $PWD =~ ${HOME}/?(.*)? ]]; then
+    local truncated=$(truncate_path ${BASH_REMATCH[1]})
+    if [[ -z "$truncated" ]]; then
+      DISPLAY_PATH="~"
+    else
+      DISPLAY_PATH="~/${truncated}"
+    fi
+  elif [[ $PWD =~ ^/google/src/cloud/${USER}/([-a-zA-Z0-9_.]+)/google3/?(.*) ]];
+  then
+    local citc_client=${BASH_REMATCH[1]}
+    DISPLAY_PATH=":${citc_client}://$(truncate_path ${BASH_REMATCH[2]})"
+  else
+    local truncated=$(truncate_path $PWD)
+    if [[ $truncated =~ ^\.\.\. ]]; then
+      DISPLAY_PATH="/${truncated}"
+    else
+      DISPLAY_PATH=$PWD
+    fi
+  fi
+}
+
+# The magic color values come from terminfo codes.  See man
+# terminfo(5)#Color Handling for details.
+prompt_color_black=$(tput setaf 0)
+prompt_color_red=$(tput setaf 1)
+prompt_color_green=$(tput setaf 2)
+prompt_color_yellow=$(tput setaf 3)
+prompt_color_blue=$(tput setaf 4)
+prompt_color_magenta=$(tput setaf 5)
+prompt_color_cyan=$(tput setaf 6)
+prompt_color_white=$(tput setaf 7)
+prompt_color_reset=$(tput op)
+prompt_mode_bold=$(tput bold)
+prompt_mode_reset=$(tput sgr0)
+
+PROMPT_COMMAND=get_condensed_path
+PROMPT_DIRTRIM=2
+HOSTNAMEPARTS=($(hostname | tr "." " "))
+if [ "${TERM}" == "screen" ]; then
+  PROMPT_SC="(SC)"
+else
+  PROMPT_SC=""
+fi
+PS1="<\[${prompt_mode_bold}${prompt_color_red}\]\u@\${HOSTNAMEPARTS[1]}\${PROMPT_SC}\[${prompt_color_reset}${prompt_mode_reset}\]>[\[${prompt_mode_bold}${prompt_color_blue}\]\${DISPLAY_PATH}\[${prompt_color_reset}${prompt_mode_reset}\]]\\$ "

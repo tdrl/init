@@ -1,0 +1,6 @@
+# List of Google-specific bash completion scripts
+
+. /etc/bash_completion.d/blaze
+. /etc/bash_completion.d/g4d
+. /etc/bash_completion.d/gqui
+. ${HOME}/private/bin/sh/g4_bashcomplete

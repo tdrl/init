@@ -1,0 +1,1 @@
+function jsgrep() { find src builtins extensions test examples -name "*.js" -print | xargs grep -il "$@"; }

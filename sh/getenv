@@ -1,0 +1,204 @@
+#!/bin/false -*- shell-script -*-
+# DO NOT EXECUTE THIS FILE!  Only source it...
+
+# Copyright Terran Lane 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2012
+
+# Barrier to prevent re-execution.  Clear this if you want to re-initialize
+# the shell vars.
+if [ -z "$INIT_HAS_EXECUTED" ]; then
+export INIT_HAS_EXECUTED=true
+
+envdir=${HOME}/.init/env
+bindir=${HOME}/.init/bin
+varprog=${bindir}/addpath.pl
+
+# Set this to see a visual trace of init execution.
+#DEBUG=1
+
+# We really need BASH for this, rather than SH.  (It's possible to do
+# in SH, of course, but I don't think it has the pushd/popd shell
+# commands.  Plus, I don't know anybody who actually runs plain-ol' SH
+# anymore.)
+if [[ ! $SHELL =~ bash$ ]]; then
+   echo "Init startup scripts supported in bash, but not sh or zsh"
+   return 1
+fi
+
+# Some helper functions.
+if [ $DEBUG ]; then
+   init::internal::pushd() { pushd $1 ; }
+   init::internal::popd() { popd ; }
+else
+   init::internal::pushd() { pushd $1 > /dev/null ; }
+   init::internal::popd() { popd > /dev/null ; }
+fi
+
+# Do the appropriate thing with a single file name.  Assumes that
+# check has already been done that $1 represents a real, existent,
+# readable filename.
+init::internal::handle_fname() {
+  # The ${1##*.} magic is BASH for "extract the part
+  # of the variable $1 trailing the final dot"
+  local vname=${1##*.}
+  if (( DEBUG )); then
+    echo "Handling $1"
+  fi
+  case $1 in
+       [0-9][0-9].F.* )  # Handle prepend variables
+           if (( DEBUG )); then echo -e "\tPrepend"; fi
+	   eval "export ${vname}='$(${varprog} -v ${vname} -F -i ${1} -x -f :)'"
+	   ;;
+       [0-9][0-9].B.* )  # Handle append variables
+           if (( DEBUG )); then echo -e "\tAppend"; fi
+           eval "export ${vname}='`${varprog} -v ${vname} -B -i ${1} -x -f :`'"
+           ;;
+       [0-9][0-9].R.* )  # Handle replace variables
+           if (( DEBUG )); then echo -e "\tReplace"; fi
+           eval "export ${vname}='`${varprog} -i ${1} -x -f :`'"
+           ;;
+       [0-9][0-9].S.* )  # Handle source directly files
+           if (( DEBUG )); then echo -e "\tSource"; fi
+           . ./${1}
+	   ;;
+       [0-9][0-9].X.* )  # Handle shell code execution
+           if (( DEBUG )); then echo -e "\tExecute"; fi
+           ./${1}
+           ;;
+       * )   # default
+          echo "Unrecognized file name type '" $1 "' in directory" `pwd`
+	  ;;
+  esac
+}
+
+# Recursively descend the env directory hierarchy, glomming up env
+# variables as we go.  Must be called with a single arg which is the
+# _full_ path to the directory it should recurse.
+init::internal::recurse() {
+  # Need to store real directory here and restore at end of function.
+  init::internal::pushd $1
+
+  # We're going node-then-children order, so handle the *files* in the current
+  # directory first...
+  for name in [0-9][0-9].[FBRSX].*; do
+    if [[ -f ${name} && -r ${name} ]]; then
+      init::internal::handle_fname ${name}
+    fi
+  done
+
+  # Now recurse into directories.
+  for name in $dirlist; do
+      if [[ -d ${name} && -x ${name} ]]; then
+	  init::internal::recurse ${name}
+      fi
+  done
+
+  # Finally, restore directory that we entered with.
+  init::internal::popd
+}
+
+#################### main program ####################
+
+# Figure out who/where we are.
+if [ "x$OS" = "x" ]; then
+  case `uname -s` in
+    [lL]inux) OS=linux ;;
+    [sS]un[oO][sS]) OS=solaris ;;
+    [Dd]arwin) OS=osx ;;
+    *) OS=os_unknown ;;
+  esac
+  export OS
+fi
+
+if [ "x$ARCH" = "x" ]; then
+  case `uname -m` in
+    i[3456]86 | x86_64)
+      ARCH=ix86
+      ;;
+    sun4u)
+      ARCH=sparc
+      ;;
+    *)
+      ARCH=arch_unknown
+      ;;
+  esac
+  export ARCH
+fi
+
+if [ "x$ARCH_BITS" = "x" ]; then
+  case `uname -m` in
+    i[3456]86)
+      ARCH_BITS=32
+      ;;
+    x86_64)
+      ARCH_BITS=64
+      ;;
+    sun4u)
+      ARCH_BITS=32
+      ;;
+    *)
+      ARCH_BITS=64   # reasonable default in the modern world
+      ;;
+  esac
+  export ARCH_BITS
+fi
+
+# Here's a tricky one: distinguishing "where" we are (in terms of what
+# entity/association is hosting this shell).  The issue is that this notion
+# is a human one, rather than a standardized one, so there's no consistent
+# way to get it.  Further, different associations encode the info differently
+# in their domain names.  Finally, there's no simple, *platform independent*
+# way to ask for a domain name.  *rolls eyes*  So this is a hack based on
+# personal knowledge of common practice.
+FULL_HOSTNAME=$(hostname -f)
+HOSTNAME_PARTS=($(hostname -f | tr "." " "))
+SHORT_HOSTNAME=${HOSTNAME_PARTS[0]}
+PLACE_TLD=${HOSTNAME_PARTS[-1]}
+PLACE_ORG=${HOSTNAME_PARTS[-2]}
+PLACE_SUBNET=${HOSTNAME_PARTS[-3]}
+PLACE_FULL=${PLACE_SUBNET}.${PLACE_ORG}.${PLACE_TLD}
+if [[ ${FULL_HOSTNAME} =~ google\.com && ${#HOSTNAME_PARTS} -ge 4 ]]; then
+  GOOGLE_SITE=${HOSTNAME_PARTS[1]}
+  GOOGLE_DOMAIN=${HOSTNAME_PARTS[2]}
+  DOMAIN=${GOOGLE_SITE}.${GOOGLE_DOMAIN}.google.com
+  SHORT_DOMAIN=google.com
+else
+  DOMAIN=${FULL_HOSTNAME#*.}
+  SHORT_DOMAIN=${DOMAIN%%.*}
+fi
+if [[ ! -v USER ]]; then
+  USER=$(whoami)
+fi
+
+export DOMAIN SHORT_DOMAIN FULL_HOSTNAME SHORT_HOSTNAME USER PLACE_TLD \
+    PLACE_ENTITY PLACE_SUBNET PLACE_FULL GOOGLE_SITE GOOGLE_DOMAIN
+
+# This list can contain duplicates (e.g., when USER==SHORT_HOSTNAME)
+# which leads to multiple execution of the same code.  So we
+# de-duplicate the directory traversal list before starting the
+# recursion.
+dirlist=$(cat <<EOF | sort -u | tr "\n" " "
+$ARCH
+$OS
+$DOMAIN
+$SHORT_DOMAIN
+$FULL_HOSTNAME
+$SHORT_HOSTNAME
+$PLACE_ORG
+$PLACE_SUBNET
+$PLACE_FULL
+$USER
+b${ARCH_BITS}
+$GOOGLE_SITE
+$GOOGLE_DOMAIN
+EOF
+)
+
+# Now we're ready to execute the user's startup sequence.
+init::internal::recurse ${envdir}
+
+# Finally, clean up extra variables and functions that we don't want cluttering the shell.
+unset envdir bindir varprog vfile vname dirlist
+unset -f init::internal::pushd init::internal::popd \
+  init::internal::handle_fname init::internal::recurse
+
+fi    # INIT_HAS_EXECUTED

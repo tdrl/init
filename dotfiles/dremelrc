@@ -1,0 +1,16 @@
+set materialize_owner_group solar-mapping;
+set csv_dialect posix;
+
+define macro is_book ($1 in ('/book/book', '/book/written_work'));
+define macro is_empty ($1 IS NULL OR $1 = '');
+define macro not_empty ($1 IS NOT NULL AND $1 != '');
+
+DEFINE MACRO mytabledef DEFINE INLINE TABLE $1 $2;
+
+-- Useful macros for working with geo and Oyster data.
+load /home/build/google3/maps/dremel/geostore_types.lua;
+load /home/build/google3/maps/dremel/in_category.lua;
+load /home/build/google3/maps/dremel/in_establishment_category.lua;
+load /home/build/google3/logs/lib/lua/maps.lua;
+
+SET SQL_DIALECT GoogleSql;

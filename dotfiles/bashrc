@@ -1,0 +1,62 @@
+
+# If not running interactively, then don't do anything
+[ -z "$PS1" ] && return
+
+############# stuff lifted from .default_bashrc #################
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# Enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+    . /etc/bash_completion
+fi
+
+############# returning to stuff terran wrote ###############
+
+# First, configure environment variables and other system-specific
+# functionality (if it hasn't previously been executed)
+inittop=${HOME}/.init/sh/getenv
+if [ -f ${inittop} ]; then
+    . ${inittop}
+fi
+
+# Now, shared functionality that we'll want essentially everywhere
+
+# Aliases and shell functions
+alias m=more
+alias k=less
+alias md=mkdir
+alias rd=rmdir
+alias z=exit
+alias com=gzip
+alias uc=gunzip
+alias h=history
+
+# General shell functions (essentially aliases)
+ll() { ls -lahF --color=always "$@" | less -EFmQRX ; }
+lf() { ls -lhF --color=always "$@" | less -EFmQRX ; }
+push() { pushd . ; }
+pop() { popd ; }
+perm() { chmod -R go+rX . ; }
+cnun() { chmod -R go-rwx . ; }
+lperm() { chgrp -R ml . ; chmod -R g+rwX,o+rX . ; }
+wipe() { srm -mzv "$@" ; }
+ct() { cd /tmp/${USER} ; }
+uc() { gunzip $* ; }
+co() { gzip $* ; }
+zk() { zcat $* | less -EFmQRX ; }
+sl() { gnome-screensaver-command --lock ; }
+
+# Command-line completion twiddles
+complete -d cd
+complete -d rd
+complete -W "-name -iname -print -exec -perm -type -atime" find
+
+# and a very sophisticated bash completer for svn
+if [ -f ${HOME}/private/bin/svncomplete.sh ]; then
+    . ${HOME}/private/bin/svncomplete.sh
+fi

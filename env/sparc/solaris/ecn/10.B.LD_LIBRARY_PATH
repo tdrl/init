@@ -1,0 +1,5 @@
+/usr/lib
+/lib
+/usr/local/X11R6/lib
+${LRN}/lib
+${LRN}/lib/X11

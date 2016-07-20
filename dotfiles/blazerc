@@ -1,0 +1,12 @@
+# Terran's blaze default configurations
+
+# This line sets a bunch of configurations for blaze when you want to build
+# GWS (which is so heavyweight that it will kill a normal workstation when
+# trying to build).
+#import /google/src/head/depot/google3/gws/tools/blazerc
+build -c opt
+run -c opt
+test --test_output=all -c dbg
+# This was suggested by Yaroslav Bulatov to get incremental build times down:
+#build --link_strategy=local --cc_strategy=local --dynamic_mode=fully # --eager_prefetch_regex=.﻿
+#build --link_strategy=local --cc_strategy=local --dynamic_mode=fully 

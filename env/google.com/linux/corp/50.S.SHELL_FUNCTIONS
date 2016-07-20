@@ -1,0 +1,23 @@
+# A useful widget to figure out the current GWS head.  To use:
+#  g4 sync @$(gws_stable gws,gws.googledata,gws.binary_and_data,sr)
+function gws_stable() {
+  /google/data/ro/projects/testing/tap/scripts/last_green_cl.par --project=$1
+}
+
+# Invoke blaze to build something, then invoke it in a sub-shell and let
+# blaze return.  That way, a long-running process won't tie up the blaze
+# server.
+blaze-run() {
+  /google/src/files/head/depot/google3/devtools/blaze/scripts/blaze-run.sh $@ ;
+}
+
+# Fix dependencies in a BUILD file for a given rule
+fixdeps() { /home/build/devtools/blazeutils/fixdeps_main.par "$@" ; }
+
+pa() { prodaccess -g ; }
+
+# Utility for accessing / manipulating cloud storage blobs.
+gsutil() { ${HOME}/private/bin/gsutil/gsutil $* ; }
+
+# A better tool for fixing up BUILD files (supposedly?)
+build_cleaner() { /google/data/ro/teams/social-backend/build_cleaner $@; }

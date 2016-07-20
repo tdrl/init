@@ -1,0 +1,14 @@
+# A shell function to emulate (ish) the OSX "open" command.
+
+function open() {
+  local mime_type=$(file -b --mime-type $1)
+  case $mime_type in
+    inode/directory) nautilus $1 ;;
+    application/pdf) evince $1 & ;;
+    image/*) eog $1 & ;;
+    application/xml) google-chrome $1 & ;;
+    text/plain) less -EFmQRX $1 ;;
+    text/html) /opt/google/chrome/chrome $1 ;;
+    *) echo "Unknown file type: ${mime_type}" ;;
+  esac
+}

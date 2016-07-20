@@ -1,0 +1,433 @@
+(eval '(setq inhibit-startup-echo-area-message "tdrl"))
+(setq initial-scratch-message nil)
+(setq inhibit-startup-message t)
+(setq debug-on-error t)
+(if (file-readable-p "~/.emacs.elc")
+    (load "~/.emacs.elc"))
+
+;; need this for the rest of the path manipulation stuff to work.  :-P
+(require 'cl)
+
+;;;;;;;;;;;;;;;;;;;;
+;;; Update the load path
+;;;;;;;;;;;;;;;;;;;;
+
+(case system-type
+  ((darwin apple-macosx)
+    (progn
+      (push "~/Library/Emacs" load-path)
+      )))
+
+;; Google-specific load path; conceivably could have to special-case
+;; this, if this .emacs file ever gets moved back to a non-Google
+;; system.
+;(push "/google/src/head/depot/eng/elisp/" load-path)
+
+;;;;;;;;;;;;;;;;;;;;
+;;; Packages that must be loaded for stuff in this file to work
+;;;;;;;;;;;;;;;;;;;;
+
+(require 'cc-mode)
+(require 'filladapt)
+;(require 'jde)
+(require 'color-theme)
+(require 'info)
+(require 'tempo)
+
+;; Google config stuff
+
+(require 'google)
+(require 'p4-google)
+(require 'google3)
+(require 'google3-build)
+(require 'google-logo)
+(require 'google-imports)
+(require 'google-cc-extras)
+;; *** Google experimental stuff! ***
+; Auto-completion
+;(require 'gcomplete)
+;(gcomplete-setup-flymake)
+;(gcomplete-setup-for-auto-complete)
+; Grok annotations
+;(grok-init)
+;(require 'google-ycmd)
+
+;; Experimental server configuration
+(if (getenv "DISPLAY")
+    (server-start))
+
+;;;;;;;;;;;;;;;;;;;;
+;;; Autoloads
+;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;
+;;; local functions
+;;;;;;;;;;;;;;;;;;;;
+
+(defun font-larger (n)
+  "Increase default font size by one step or, with prefix argument n,
+  by n steps."
+  (interactive "p")
+  (set-face-attribute 'default nil
+                      :height (+ (face-attribute 'default :height)
+                                 (* (or n 1) 20))))
+
+(defun font-smaller (n)
+  "Decrease default font size by one step or, with prefix argument n,
+  by n steps."
+  (interactive "p")
+  (set-face-attribute 'default nil
+                      :height (- (face-attribute 'default :height)
+                                 (* (or n 1) 10))))
+
+(defun tdrl-insert-time-stamp ()
+  "Insert the current time/date stamp into the current buffer at point"
+  (interactive)
+  (insert (format-time-string "%a, %m-%d-%Y %l:%M %p %Z")))
+
+(defun de-wordwrap (bounded top bottom)
+  "Unwrap text into single-line-per-paragraph form.
+
+   This converts 'traditional style', newline-wrapped,
+   blank-line-for-paragraph-separation text and converts it into
+   single-line-per-paragraph, blank-line-for-paragraph-separation form
+   that's more tasty for most web forms."
+  (interactive "*P\nr")
+  ; Chance of the par-bound-string appearing in a document is
+  ; virtually 0.
+  (let ((par-bound-string (format "__PAR_BOUND::%d__" (random)))
+        (save-point (point))
+        (search-start (if bounded top (point)))
+        (bound (if bounded bottom nil)))
+    ; Make sure we're at the beginning of the region (if mark<point,
+    ; then top==mark, not point).
+    (goto-char search-start)
+    ; Look for paragraph bounds and replace them with demarcation
+    ; gensyms.
+    (while (search-forward-regexp "\n\n+" bound t)
+      (replace-match par-bound-string nil t))
+    ; Back to the beginning.  This time, replace single newlines with
+    ; single spaces.
+    (goto-char search-start)
+    (while (search-forward "\n" bound t)
+      (replace-match " " nil t))
+    ; One more pass: replace par-bound-string symbols with double
+    ; newlines, for blank-line paragraph separation.
+    (goto-char search-start)
+    (while (search-forward-regexp par-bound-string bound t)
+      (replace-match "\n\n" nil t))
+    ; Return to where we began.
+    (goto-char save-point)))
+
+;(message "Init m4")
+
+;;;;;;;;;;;;;;;;;;;;
+;;; global keybindings
+;;;;;;;;;;;;;;;;;;;;
+
+(global-set-key "\M-?" 'help-command)
+(global-set-key "\C-x?" 'describe-key-briefly)
+(global-set-key "\C-u" '(lambda (c) (interactive "p")
+                          (beginning-of-line)
+                          (kill-line c)))
+(global-set-key "%" '(lambda (c) (interactive "p")
+                       (cond ((looking-at "\\s\(")
+                              (forward-list 1) (backward-char 1))
+                             ((looking-at "\\s\)")
+                              (forward-char 1) (backward-list 1))
+                             (t (self-insert-command (or c 1))))))
+(global-set-key "\M-g" 'goto-line)
+(global-set-key "\C-s" 'isearch-forward-regexp)
+(global-set-key "\C-r" 'isearch-backward-regexp)
+(global-set-key "\M-r" 'replace-regexp)
+(global-set-key "\M-\C-r" 'replace-in-region)
+(global-set-key "\M-+" 'font-larger)
+(global-set-key "\M-_" 'font-smaller)
+(global-set-key [M-right] '(lambda (c) (interactive "p")
+                               (other-frame c)))
+(global-set-key [s-right] '(lambda (c) (interactive "p")
+                               (other-frame c)))
+(global-set-key [M-left] '(lambda (c) (interactive "p")
+                               (other-frame (- c))))
+(global-set-key [s-left] '(lambda (c) (interactive "p")
+                               (other-frame (- c))))
+(global-set-key [s-down] 'other-window)
+(global-set-key [M-down] 'other-window)
+(global-set-key [s-up] '(lambda (c) (interactive "p")
+                          (other-window (- c))))
+(global-set-key [M-up] '(lambda (c) (interactive "p")
+                          (other-window (- c))))
+(global-set-key [S-backspace] 'delete-char)
+(global-set-key [M-tab] 'hippie-expand)
+
+;(message "Init m5")
+
+;; System-specific key bindings
+(case system-type
+  ((darwin apple-macosx)
+   (global-set-key [M-t] 'mac-font-panel-mode)
+   )
+  ((gnu/linux)
+   (progn
+     (global-set-key "\M- " 'set-mark-command)
+     (global-set-key (kbd "s-c") 'clipboard-kill-ring-save)
+     (global-set-key (kbd "s-v") 'clipboard-yank)
+     (global-set-key (kbd "s-x") 'clipboard-kill-region)
+     ; not precisely a key binding, but strongly affects key/mouse behavior
+     (delete-selection-mode 1)
+;     (global-set-key [M-space] 'set-mark-command)
+;     (global-set-key [M-S-backspace] 'kill-word)
+     ))
+)
+
+;; Google-specific key bindings
+(google-cc-extras/bind-default-keys)
+
+;;;;;;;;;;;;;;;;;;;;
+;;; Global variable settings
+;;;;;;;;;;;;;;;;;;;;
+
+(global-auto-revert-mode)
+
+; Make emacs aware of smileys as sentence separators.  (Seems to work,
+; but may need some tweaking.)
+(setq sentence-end 
+"[.?!][]\"')}]*\\([     
+]+[:;8][-^][)P|(]\\)*\\($\\| $\\|       \\|  \\)[       
+]*")
+
+(setq-default mode-line-format
+              '(""
+                "<%*%+>%b-"
+                (buffer-file-chopped-name
+                 ("" "-[" buffer-file-chopped-name "]-"))
+                (process-buffer-p "-%s-")
+                "-%[("
+                mode-name
+                minor-mode-alist
+                "%n)%]-"
+                (line-number-mode "-<%l,%c>-(")
+                (-3 . "%p")
+                (line-number-mode ")")
+                "%-"))
+
+(setq kill-whole-line t)
+;(setq-default auto-fill-function 'do-auto-fill)
+(setq scroll-step 1)
+(setq-default indent-tabs-mode t)
+(setq-default auto-show-mode t)
+(setq auto-save-interval 600)
+(setq make-backup-files nil)
+(setq apropos-do-all t)
+;(setq-default filladapt-mode t)
+;(setq-default truncate-lines t)
+;(hscroll-global-mode 1)
+(setq next-line-add-newlines nil)
+
+;; set better default file permissions -- not really a setq, but does
+;; the right thing
+(set-default-file-modes ?\700)
+
+;; CC-mode variables
+;; let google-coding-style.el define these for us
+;(setq c-style-variables-are-local-p nil)
+;(setq c-basic-offset 2)
+;(setq c-block-comment-prefix "* ")
+;(setq-default c-tab-always-indent 'other)
+;(c-set-offset 'case-label '+)
+
+;; font-lock-mode configuration
+
+(defun font-lock-width-keyword (width)
+  "Return a font-lock style keyword for a string beyond width WIDTH
+that uses 'font-lock-warning-face'."
+  `((,(format "^%s\\(.+\\)" (make-string width ?.))
+     (1 font-lock-warning-face t))))
+
+;; Set up faces for trailing spaces at the end of line and literal tab
+;; characters.
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:family "Ubuntu Mono" :foundry "unknown" :slant normal :weight normal :height 158 :width normal))))
+ '(font-lock-variable-name-face ((t (:foreground "green"))))
+ '(my-tab-face ((((class color)) (:background "white"))) t)
+ '(my-trailing-space-face ((((class color)) (:background "red"))) t))
+
+(font-lock-add-keywords 'c++-mode (font-lock-width-keyword 80))
+(font-lock-add-keywords 'java-mode (font-lock-width-keyword 100))
+(font-lock-add-keywords 'js-mode (font-lock-width-keyword 80))
+(font-lock-add-keywords 'python-mode (font-lock-width-keyword 80))
+;; (dolist (mode '(c++-mode java-mode js-mode python-mode))
+;;   (font-lock-add-keywords mode '(("\t+" (0 'my-tab-face t))
+;; 				 ("[ \t]+$" (0 'my-trailing-space-face t)))))
+
+;(setq font-lock-global-modes
+;      '(c-mode c++-mode matlab-mode java-mode emacs-lisp-mode
+;              sgml-mode html-mode latex-mode bibtex-mode perl-mode))
+;(global-font-lock-mode 1)
+
+;(color-theme-calm-forest)
+;(if (featurep 'color-theme)
+;    (color-theme-dark-blue2))
+
+;; VM mail reader config stuff
+
+;; Update the info path
+(setq Info-default-directory-list
+      (append Info-default-directory-list '("~/Library/Emacs/Info")))
+
+; bibtex-mode
+;(require 'bibtex)
+;(setq bibtex-align-at-equal-sign t)
+;(push '("url" "Web address of paper when last downloaded")
+;      bibtex-user-optional-fields)
+;; sadly, can't use an anonymous function here b/c they use "funcall" to
+;; evaluate the third element of the optional variable description list
+;(defun tdrl-bibtex-date-generator ()
+;  (format-time-string "%b %-e, %Y"))
+;(push '("urlDate" "Date when paper last downloaded" tdrl-bibtex-date-generator)
+;      bibtex-user-optional-fields)
+;(push '("keywords" "Descriptive keywords (e.g., subjects, authors) for the paper")
+;      bibtex-user-optional-fields)
+;(push '("DOI" "Digital Object Identifier (DOI) for this article")
+;      bibtex-user-optional-fields)
+;(push '("PMID" "PubMed ID")
+;      bibtex-user-optional-fields)
+;(push '("PMCID" "PubMed *Central* ID (free article full content)")
+;      bibtex-user-optional-fields)
+;(push '("NIHMS" "NIHMS ID -- intermediate article state, before getting full PMCID")
+;      bibtex-user-optional-fields)
+;(push '("isPeerReviewed" "Is this paper peer reviewed?  Blank or omit or 'True' for yes; 'False' for no")
+;      bibtex-user-optional-fields)
+;(push '("isPopular" "Is this a 'popular press' (i.e., non-technical) paper?  'True' for yes; 'False' or omit for no")
+;      bibtex-user-optional-fields)
+;(push '("acknowledges" "What grant(s), if any, does this paper acknowledge?  Comma separated list")
+;      bibtex-user-optional-fields)
+
+;; window system info
+(case system-type
+  ('darwin
+    (progn
+      (setq focus-follows-mouse nil))))
+
+;(message "Init m7")
+
+;;;;;;;;;;;;;;;;;;;;
+;;; Hooks
+;;;;;;;;;;;;;;;;;;;;
+
+; first, everybody who needs auto-fill mode
+;(dolist (m '(text-mode-hook emacs-lisp-mode-hook))
+;  (add-hook m 'turn-on-auto-fill))
+
+; Ask google3 code to generate appropriately typed file boilerplate
+; when a new file is created.
+(add-hook 'find-file-not-found-hooks 'autogen)
+
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (local-set-key "\C-c\C-c" 'google3-build)
+            (local-set-key "\M-/" 'hippie-expand)
+            (turn-on-font-lock)
+            (setq fill-column 78)
+            (c-setup-filladapt)
+            (setq c-backspace-function 'backward-delete-char)
+            (c-toggle-hungry-state 1)
+            (define-key c-mode-base-map "\C-m" 'c-context-line-break)))
+
+(add-hook 'jde-mode-hook
+          (lambda ()
+            (local-set-key "\C-c\C-c" 'jde-compile)
+            (local-set-key "\C-c\C-r" 'jde-run)
+            (local-set-key [C-tab] 'jde-complete-in-line)))
+
+(add-hook 'compilation-mode-hook
+          (lambda ()
+            (setq truncate-lines nil)))
+
+(add-hook 'text-mode-hook
+          (lambda ()
+            (local-set-key "\C-c\C-t"
+                           (lambda () (interactive)
+                             (insert "--------------------\n")
+                             (tdrl-insert-time-stamp)
+                             (insert "\n")))))
+
+(add-hook 'python-mode-hook
+	  (lambda()
+	    (local-set-key (kbd "s-/") 'hippie-expand)))
+
+;(add-hook 'minibuffer-setup-hook
+;         (lambda ()
+;           (setq (make-local-variable 'hippie-expand-try-functions-list)
+;                '(try-complete-file-name
+;                  try-complete-lisp-symbol))))
+
+;(message "Init m8")
+
+;;;;;;;;;;;;;;;;;;;;
+;;; Undisabling commands
+;;;;;;;;;;;;;;;;;;;;
+
+(put 'erase-buffer 'disabled nil)
+
+;;;;;;;;;;;;;;;;;;;;
+;;; Custom bits of personal code
+;;;;;;;;;;;;;;;;;;;;
+
+(defun replace-in-region ()
+"Do a regular expression replacement in the specified region."
+  (interactive)
+  (save-window-excursion
+    (save-restriction
+        (narrow-to-region (mark) (point))
+        (goto-char (point-min))
+        (call-interactively 'replace-regexp))))
+
+;(message "Init m9")
+
+;; Tempo configuration: Custom code templates engine
+
+(defvar tempo-initial-pos nil
+   "Initial position in template after expansion")
+
+(defadvice tempo-insert( around tempo-insert-pos act )
+   "Define initial position."
+   (if (eq element '~)
+         (setq tempo-initial-pos (point-marker))
+     ad-do-it))
+
+(defadvice tempo-insert-template( around tempo-insert-template-pos act )
+   "Set initial position when defined."
+   (setq tempo-initial-pos nil)
+   ad-do-it
+   (if tempo-initial-pos
+       (progn
+         (put template 'no-self-insert t)
+         (goto-char tempo-initial-pos))
+    (put template 'no-self-insert nil)))
+
+(load "~/.emacs-tempo-templates")
+
+;;;;;;;;;;;;;;;;;;;;
+;;; Stuff added by customize
+;;;;;;;;;;;;;;;;;;;;
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(color-theme-selection "Clarity and Beauty" nil (color-theme_seldefcustom))
+ '(dired-listing-switches "-alFDh")
+ '(google3-build-default-extra-arguments "-c opt")
+ '(load-home-init-file t t)
+ '(scroll-bar-mode (quote right))
+ '(tempo-interactive t)
+ '(tool-bar-mode nil))
+
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)

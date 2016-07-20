@@ -1,0 +1,4 @@
+startup_message off
+unsetenv INIT_HAS_EXECUTED
+defscrollback 16384
+escape ^\\\

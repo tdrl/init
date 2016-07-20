@@ -1,0 +1,36 @@
+#!/bin/bash
+#
+# Setup for the Logitech Marble Mouse Trackball.  The issue is that this
+# trackball doesn't have a scroll wheel, though it does have a couple of
+# nearly-useless micro-buttons (mapped by default to web page back and
+# forward.  Ugh.)  The following incantations will set it to:
+#   1) Emulate a middle button through a left/right button simultaneous click
+#   2) Emulate a scroll wheel by holding button 8 (the left mini-button)
+#      and rolling the trackball.  This has the advantage of providing
+#      horizontal as well as vertical scrolling.
+#
+# This follows advice at https://wiki.archlinux.org/index.php/Logitech_Marble_Mouse
+# but uses xinput rather than fiddling the xmodmap or xorg.conf
+
+# First, make sure we actually have one of these present.
+POINTER_DEVICES=("Logitech USB Trackball" "pointer:Chicony USB Keyboard")
+for DEVNAME in "${POINTER_DEVICES[@]}"; do
+  # Note: When we're using the KVM, it proxies the Logitech trackball via a
+  # virtual device named 'Chicony USB Keyboard'.  Unfortunately, it also
+  # proxies the actual keyboard via that same name, so we need to add a
+  # 'pointer:' prefix when setting device status to specify which one we're
+  # talking about.  Of course, the xinput --list doesn't *produce* that
+  # prefix, so we have to strip it here for the existence test.  Ugh.
+  if ( xinput --list --name-only | grep -q "${DEVNAME/pointer:/}" ); then
+    xinput --set-prop "$DEVNAME" "Evdev Wheel Emulation" 1
+    # Using button 8 (left mini-button) was causing me some serious wrist strain
+    # from keeping my thumb there constantly.  Going to try to use button 3
+    # (right primary button) for a while to see if that's less strainful.
+    #  xinput --set-prop "$DEVNAME" "Evdev Wheel Emulation Button" 8
+    xinput --set-prop "$DEVNAME" "Evdev Wheel Emulation Button" 3
+    xinput --set-prop "$DEVNAME" "Evdev Wheel Emulation Axes" 6 7 4 5
+    # The following command is not "sticking".  No idea why ATM.  Futz
+    # with it later.  :-P
+    xinput --set-prop "$DEVNAME" "Evdev Middle Button Emulation" 1
+  fi
+done

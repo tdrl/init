@@ -1,0 +1,60 @@
+#!/bin/false
+# DO NOT EXECUTE THIS FILE!  Only source it...
+
+# Copyright Terran Lane 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2012
+
+# This is just a wrapper to set up the preconditions for calling recurse.csh
+
+# figure out who/where we are
+
+if ( ! $?OS ) then
+  if ( $?OSTYPE ) then
+    setenv OS $OSTYPE
+  else
+    switch (`uname -s`)
+      case [lL]inux:
+	setenv OS linux
+	breaksw
+      case [sS]un[oO][sS]:
+	setenv OS solaris
+	breaksw
+      default:
+	setenv OS os_unknown
+    endsw
+  endif
+endif
+
+if ( ! $?ARCH ) then
+  if ( $?MACHTYPE ) then
+    setenv ARCH $MACHTYPE
+  else
+    setenv ARCH `uname -m`
+  endif
+  switch ($ARCH)
+    case i[x3456]86:
+      setenv ARCH ix86
+      breaksw
+    case sun4u:
+      setenv ARCH sparc
+      breaksw
+    default:
+      setenv ARCH arch_unknown
+  endsw
+endif
+
+if ( ! $?DOMAIN ) setenv DOMAIN `dnsdomainname`
+if ( ! $?SHORT_DOMAIN ) setenv SHORT_DOMAIN `dnsdomainname | cut -d . -f 1`
+if ( ! $?HOST ) setenv HOST `hostname`
+if ( ! $?SHORT_HOST ) setenv SHORT_HOST `hostname | cut -d . -f 1`
+if ( ! $?USER ) setenv USER `whoami`
+if ( ! $?PLACE ) setenv PLACE `hostname -d | perl -ne 'split(/\./); print $_[$#_-1];'`
+
+# See the note in recurse.csh as to why this is hideous...
+set pushd_cmd=pushd
+set popd_cmd=popd
+
+$pushd_cmd ${HOME}/.init/env > /dev/null
+source ${HOME}/.init/csh/recurse.csh
+$popd_cmd > /dev/null
+
+unset pushd_cmd popd_cmd

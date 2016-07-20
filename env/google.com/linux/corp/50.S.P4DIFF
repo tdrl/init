@@ -1,0 +1,5 @@
+if [[ -v DISPLAY ]]; then
+  export P4DIFF=/usr/local/google/home/tdrl/private/bin/bin/p4merge
+else
+  export P4DIFF=/usr/bin/colordiff
+fi

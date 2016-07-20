@@ -1,0 +1,3 @@
+srm() { shred --remove -z "$@" ; }
+fu() { fileutil --sharded $* | less -EFmQRX ; }
+fll() { fileutil --sharded ls -lh -lg -F $* | less -EFmQRX ; }

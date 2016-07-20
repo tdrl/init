@@ -1,0 +1,12 @@
+${LRN}/man
+${HOME}/pub/man
+${HOME}/private/man
+/usr/openwin/man
+/usr/local/X11R6/man
+/usr/local/man
+/usr/man
+/opt/man
+/usr/bin/man
+/usr/share/catman
+/usr/unsup/man
+/usr/local/lib/perl5/man

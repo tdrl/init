@@ -1,0 +1,6 @@
+/usr/man
+/usr/X11R6/man
+${HOME}/pub/man
+${HOME}/private/man
+/usr/local/man
+/usr/share/catman

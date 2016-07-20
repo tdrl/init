@@ -1,0 +1,18 @@
+#!/bin/csh -f
+#
+# This .login is only a skeleton that sources other files found within
+# ${HOME}/.init
+#
+# Terran Lane, 1997
+
+# Copyright Terran Lane 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2012
+
+if ( -r ${HOME}/.init/csh/getenv ) source ${HOME}/.init/csh/getenv
+if ( -r ${HOME}/.init/csh/all_startup ) source ${HOME}/.init/csh/all_startup
+
+# check to be sure that we're actually attached to a tty before trying
+# tty initializations (not sure if this is the best/most general way
+# to do this, but for the moment...)
+if ( { tty -s } && ! ${?DT} && -r ${HOME}/.init/csh/tty_startup ) then
+  source ${HOME}/.init/csh/tty_startup
+endif

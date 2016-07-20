@@ -1,0 +1,10 @@
+set bell-style none
+set mark-symlinked-directories on
+set show-all-if-ambiguous off
+TAB: menu-complete
+# This bit of arcana bins the reverse direction for menu-complete to shift-tab.
+"\e[Z": menu-complete-backward
+# Make meta-backspace kill back to the previous whitespace or slash, not just
+# the previous non-alphanum character.
+"\e\C-h": unix-filename-rubout
+"\e\C-?": unix-filename-rubout

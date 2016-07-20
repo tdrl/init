@@ -1,0 +1,13 @@
+# Things after this in the init sequence require prodaccess, so init
+# it if necessary.
+#
+# Here's the original script bit that I saw on eng-misc.  I've twiddled it
+# to specialize a bit below.
+#
+#if [ -e /usr/bin/prodcertstatus -a -e /usr/bin/prodaccess ]; then
+#    prodcertstatus || prodaccess --kinit
+#    kinit -R || kinit
+#fi
+if [ -e /usr/bin/prodcertstatus -a -e /usr/bin/prodaccess ]; then
+    prodcertstatus -q --check_remaining_hours=8 || prodaccess -g
+fi

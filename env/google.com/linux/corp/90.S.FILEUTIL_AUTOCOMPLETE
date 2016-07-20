@@ -1,0 +1,4 @@
+# Set up fileutil to auto-complete paths via the gqui server.  Sweet!
+complete -o nospace -C 'G_COMP_WORDBREAKS="${COMP_WORDBREAKS}" \
+  GQUI_CLI_FILEUTIL_MODE=1 GQUI_CLI_SOCKET=~/.gqui/fileutil-tab \
+  /usr/bin/cli-client-gqui COMPLETE' fileutil fu fll
