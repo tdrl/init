@@ -2,10 +2,12 @@
 # Prompt setup
 
 if [ -f /usr/local/git/current/share/git-core/git-prompt.sh ]; then
-    . /usr/local/git/current/share/git-core/git-prompt.sh
+  . /usr/local/git/current/share/git-core/git-prompt.sh
+elif [ -f /etc/bash_completion.d/git-prompt ]; then
+  . /etc/bash_completion.d/git-prompt
 else
   function __git_ps1() {
-    echo -n ""
+    true
   }
 fi
 
@@ -37,7 +39,11 @@ function get_condensed_path() {
     if [[ -z "$truncated" ]]; then
       DISPLAY_PATH="~"
     elif [[ ! -z "$git_branch" ]]; then
-      DISPLAY_PATH=":${git_branch}:${truncated}"
+      # We don't want to show the full path -- only the bit relative to the
+      # current git repo root.
+      truncated="$(truncate_path $(git rev-parse --show-prefix))"
+      local repo=$(basename $(git rev-parse --show-toplevel))
+      DISPLAY_PATH=":${repo}${git_branch}://${truncated}"
     else
       DISPLAY_PATH="~/${truncated}"
     fi
