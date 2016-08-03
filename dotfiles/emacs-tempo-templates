@@ -1,0 +1,217 @@
+; -*- emacs-lisp -*-
+
+(require 'tempo)
+
+(tempo-define-template "namespace"
+  '("namespace " (p "Namespace name: " name) (if (looking-back " ") "{" " {") n
+    ~ n
+    "}  // namespace " (s name) (if (looking-back " ")
+                                    (delete-horizontal-space)) n)
+  "namespace"
+  "C++ namespace")
+
+(tempo-define-template "flume-mapfn-default"
+  '("class " (p "MapFn class name: " class-name) " : public MapFn<"
+    (p "Input type: " input-type) ", " (p "Output type: " output-type) "> {" n
+    "public:" > n
+    "DECLARE_STATELESS_FN(" (p class-name) ");" > n
+    "virtual void InitializeReplica(const EmitFn<OutputType>& /* unused */) {" > n
+    "}" > n
+    n
+    "virtual OutputType Map(const InputType& in) {" > n
+    > ~ n
+    "}" > n
+    n
+    "private:" > n
+    "// Transient" > n
+    "}" > n
+    "REGISTER_FN(" (s class-name) ");" n)
+  "mapd"
+  "Flume MapFn: Default")
+
+(tempo-define-template "flume-mapfn-notransient"
+  '("class " (p "MapFn class name: " class-name) " : public MapFn<"
+    (p "Input type: " input-type) ", " (p "Output type: " output-type) "> {" n
+    "public:" > n
+    "virtual OutputType Map(const InputType& in) {" > n
+    > ~ n
+    "}" > n
+    "}" > n
+    "REGISTER_FN(" (s class-name) ");" n)
+  "mapnt"
+  "Flume MapFn: No transients")
+
+(tempo-define-template "flume-mapfn-pure-fn"
+  '((p "Output type: " output-type) " "
+    (p "Pure function name: " pure-fn-name) "(const "
+    (p "Input type: " input-type) "& in) {" n
+    > ~ n
+    "}" n
+    "DECLARE_PURE_FUNCTION_WRAPPER(MapFn," n
+    (s pure-fn-name) "Fn," > n
+    (s pure-fn-name) ");" > n)
+  "mappf"
+  "Flume MapFn: Pure function")
+
+(tempo-define-template "flume-dofn-default"
+  '("class " (p "DoFn class name: " class-name) " : public DoFn<"
+    (p "Input type: " input-type) ", " (p "Output type: " output-type) "> {" n
+    "public:" > n
+    "DECLARE_STATELESS_FN(" (p class-name) ");" > n
+    "virtual void InitializeReplica(const EmitFn<OutputType>& /* unused */) {" > n
+    "}" > n
+    n
+    "virtual void Do(const InputType& in, const EmitFn<OutputType>& out) {" > n
+    > ~ n
+    "}" > n
+    n
+    "private:" > n
+    "// Transient" > n
+    "}" > n
+    "REGISTER_FN(" (s class-name) ");" n)
+  "dod"
+  "Flume DoFn: Default")
+
+(tempo-define-template "flume-dofn-notransient"
+  '("class " (p "DoFn class name: " class-name) " : public DoFn<"
+    (p "Input type: " input-type) ", " (p "Output type: " output-type) "> {" n
+    "public:" > n
+    "virtual void Do(const InputType& in, const OutputType& out) {" > n
+    > ~ n
+    "}" > n
+    "}" > n
+    "REGISTER_FN(" (s class-name) ");" n)
+  "dont"
+  "Flume DoFn: No transients")
+
+(tempo-define-template "flume-dofn-pure-fn"
+  '("void "
+    (p "Pure function name: " pure-fn-name) "(const "
+    (p "Input type: " input-type) "& in, "
+    "const EmitFn<" (p "Output type: " output-type) ">& out) {" n
+    > ~ n
+    "}" n
+    "DECLARE_PURE_FUNCTION_WRAPPER(Dofn," n
+    (s pure-fn-name) "Fn," > n
+    (s pure-fn-name) ");" > n)
+  "dopf"
+  "Flume DoFn: Pure function")
+
+(tempo-define-template "flume-mapvaluesfn-default"
+  '("class " (p "MapValuesFn class name: " class-name) " : public MapValuesFn<"
+    (p "Key type: " key-type) "," > n
+    (p "Input type: " input-type) "," > n
+    (p "Output type: " output-type) "> {" > n
+    "public:" > n
+    "DECLARE_STATELESS_FN(" (s class-name) ");" > n
+    "virtual void InitializeReplica(const EmitFn<OutputValueType>& /* unused */) {" > n
+    "}" > n
+    n
+    "virtual OutputValueType Map(const InputKeyType& key," > n
+    "const InputValueType& in) {" > n
+    > ~ n
+    "}" > n
+    n
+    "private:" > n
+    "// Transient" > n
+    "}" > n
+    "REGISTER_FN(" (s class-name) ");" n)
+  "mapvd"
+  "Flume MapValuesFn: Default")
+
+(tempo-define-template "flume-mapvaluesfn-notransient"
+  '("class " (p "MapValuesFn class name: " class-name) " : public MapValuesFn<"
+    (p "Key type: " key-type) "," > n
+    (p "Input type: " input-type) "," > n
+    (p "Output type: " output-type) "> {" > n
+    "public:" > n
+    "virtual OutputValueType Map(const InputKeyType& key," > n
+    "const InputValueType& in) {" > n
+    > ~ n
+    "}" > n
+    "}" > n
+    "REGISTER_FN(" (s class-name) ");" n)
+  "mapvnt"
+  "Flume Mapvaluesfn: No transients")
+
+(tempo-define-template "flume-mapvaluesfn-pure-fn"
+  '((p "Output type: " output-type) " "
+    (p "Pure function name: " pure-fn-name) "(const "
+    (p "Key type: " key-type) "& key, "
+    (p "Input type: " input-type) "& in) {" > n
+    > ~ n
+    "}" n
+    "DECLARE_PURE_FUNCTION_WRAPPER(MapValuesFn," n
+    (s pure-fn-name) "Fn," > n
+    (s pure-fn-name) ");" > n)
+  "mapvpf"
+  "Flume MapValuesFn: Pure function")
+
+(tempo-define-template "flume-dovaluesfn-default"
+  '("class " (p "DoValuesFn class name: " class-name) " : public DoValuesFn<"
+    (p "Key type: " key-type) "," > n
+    (p "Input type: " input-type) "," > n
+    (p "Output type: " output-type) "> {" > n
+    "public:" > n
+    "DECLARE_STATELESS_FN(" (s class-name) ");" > n
+    "virtual void InitializeReplica(const EmitFn<OutputValueType>& /* unused */) {" > n
+    "}" > n
+    n
+    "virtual void Do(const InputKeyType& key," > n
+    "const InputValueType& in," > n
+    "const EmitFn<OutputValueType>& out) {" > n
+    > ~ n
+    "}" > n
+    n
+    "private:" > n
+    "// Transient" > n
+    "}" > n
+    "REGISTER_FN(" (s class-name) ");" n)
+  "dovd"
+  "Flume DoValuesFn: Default")
+
+(tempo-define-template "flume-dovaluesfn-notransient"
+  '("class " (p "DoValuesFn class name: " class-name) " : public DovaluesFn<"
+    (p "Key type: " key-type) "," > n
+    (p "Input type: " input-type) "," > n
+    (p "Output type: " output-type) "> {" > n
+    "public:" > n
+    "virtual void Do(const InputKeyType& key," > n
+    "const InputValueType& in," > n
+    "const EmitFn<OutputValueType>& out) {" > n
+    > ~ n
+    "}" > n
+    "}" > n
+    "REGISTER_FN(" (s class-name) ");" n)
+  "dovnt"
+  "Flume DoValuesfn: No transients")
+
+(tempo-define-template "flume-dovaluesfn-pure-fn"
+  '("void "
+    (p "Pure function name: " pure-fn-name) "(const "
+    (p "Key type: " key-type) "& key," > n
+    "const " (p "Input type: " input-type) "& in," > n
+    "const EmitFn<" (p "Output type: " output-type) ">& out) {" > n
+    > ~ n
+    "}" n
+    "DECLARE_PURE_FUNCTION_WRAPPER(DoValuesFn," n
+    (s pure-fn-name) "Fn," > n
+    (s pure-fn-name) ");" > n)
+  "dovpf"
+  "Flume DoValuesFn: Pure function")
+
+(tempo-define-template "flume-main"
+  '("#include \"base/commandlineflags.h\"" n
+    "#include \"base/init_google.h\"" n
+    "#include \"base/logging.h\"" n
+    "#include \"pipeline/flume/public/flume.h\"" n n
+    "void ValidateFlags() {" n
+    "}" n n
+    "int main(int argc, char** argv) {" n
+    "InitGoogle(argv[0], &argc, &argv, true);" > n
+    "ValidateFlags();" > n
+    "// Initialize Flume and automatically clean up at end of scope." > n
+    "::pipeline::flume::Flume flume;" > n
+    "}")
+  "flumemain"
+  "Flume Main Program")

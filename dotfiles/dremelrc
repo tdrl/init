@@ -1,4 +1,3 @@
-set materialize_owner_group solar-mapping;
 set csv_dialect posix;
 
 define macro is_book ($1 in ('/book/book', '/book/written_work'));
