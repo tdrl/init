@@ -36,13 +36,14 @@
 
 ;; Google config stuff
 
-(require 'google)
-(require 'p4-google)
-(require 'google3)
-(require 'google3-build)
-(require 'google-logo)
-(require 'google-imports)
-(require 'google-cc-extras)
+(if (require 'google nil t)
+    (progn
+      (require 'p4-google)
+      (require 'google3)
+      (require 'google3-build)
+      (require 'google-logo)
+      (require 'google-imports)
+      (require 'google-cc-extras)))
 ;; *** Google experimental stuff! ***
 ; Auto-completion
 ;(require 'gcomplete)
@@ -181,7 +182,8 @@
 )
 
 ;; Google-specific key bindings
-(google-cc-extras/bind-default-keys)
+(if (functionp 'google-cc-extras/bind-default-keys)
+    (google-cc-extras/bind-default-keys))
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;; Global variable settings
