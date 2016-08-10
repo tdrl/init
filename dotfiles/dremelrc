@@ -12,4 +12,7 @@ load /home/build/google3/maps/dremel/in_category.lua;
 load /home/build/google3/maps/dremel/in_establishment_category.lua;
 load /home/build/google3/logs/lib/lua/maps.lua;
 
+-- Macros for handling logs, including parsing of URL params.
+load /auto/build/google3/gws/tools/dremel/gws.lua;
+
 SET SQL_DIALECT GoogleSql;
