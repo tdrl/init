@@ -1,3 +1,4 @@
+set accounting_group ads-latency;
 set csv_dialect posix;
 
 define macro is_book ($1 in ('/book/book', '/book/written_work'));

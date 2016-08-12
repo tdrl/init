@@ -423,7 +423,9 @@ that uses 'font-lock-warning-face'."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(color-theme-selection "Clarity and Beauty")
+ '(ansi-color-names-vector ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
+ ;'(color-theme-selection "Clarity and Beauty")
+ '(custom-enabled-themes (quote (wheatgrass)))
  '(dired-listing-switches "-alFDh")
  '(google3-build-default-extra-arguments "-c opt")
  '(load-home-init-file t t)
