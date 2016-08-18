@@ -12,6 +12,11 @@
 # This follows advice at https://wiki.archlinux.org/index.php/Logitech_Marble_Mouse
 # but uses xinput rather than fiddling the xmodmap or xorg.conf
 
+# When using a Logitech trackball with no scroll wheel, this is necessary.
+# Now that I have a trackball with a scroll wheel, I can skip out of this.
+# But I'd like to preserve the code for the future, in case I go back to that
+# mouse.
+exit
 # First, make sure we actually have one of these present.
 POINTER_DEVICES=("Logitech USB Trackball" "pointer:Chicony USB Keyboard")
 for DEVNAME in "${POINTER_DEVICES[@]}"; do
