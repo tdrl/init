@@ -1,9 +1,3 @@
-# A useful widget to figure out the current GWS head.  To use:
-#  g4 sync @$(gws_stable gws,gws.googledata,gws.binary_and_data,sr)
-function gws_stable() {
-  /google/data/ro/projects/testing/tap/scripts/last_green_cl.par --project=$1
-}
-
 # Invoke blaze to build something, then invoke it in a sub-shell and let
 # blaze return.  That way, a long-running process won't tie up the blaze
 # server.

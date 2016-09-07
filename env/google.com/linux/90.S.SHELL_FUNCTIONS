@@ -1,9 +1,33 @@
 srm() { shred --remove -z "$@" ; }
+
+# fileutil shorthands.
 fu() { fileutil --sharded $* | less -EFmQRX ; }
 fll() { fileutil --sharded ls -lh -lg -F $* | less -EFmQRX ; }
+
+# A useful widget to figure out the current GWS head.  To use:
+#  g4 sync @$(gws_stable gws,gws.googledata,gws.binary_and_data,sr)
+# Possibly deprecated by synctogreen?
+#function gws_stable() {
+#  /google/data/ro/projects/testing/tap/scripts/last_green_cl.par --project=$1
+#}
+
+# Sync to latest green CL for building GWS.  Must be run from a google3 dir.
+synctogreen() {
+  ./gws/tools/sync_to_green.sh
+}
+
+# Build a local GWS.
 buildgws() {
   blaze \
     --blazerc=/google/src/head/depot/google3/gws/tools/blazerc \
     build \
     -c opt //gws:gws //gws:dev_fileset
+}
+
+# Start a local GWS.  Assumes that ~/.startgwsrc contains necessary flags.
+# If you need to specify them manually, use:
+#   ./gws/tools/startgws.py --binary=blaze-bin/gws/gws --alsologtostderr
+# Must be run from a google3 dir.
+startgws() {
+  ./gws/tools/startgws.py $@;
 }
