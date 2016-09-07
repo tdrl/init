@@ -154,6 +154,9 @@
                                (other-frame (- c))))
 (global-set-key [s-down] 'other-window)
 (global-set-key [M-down] 'other-window)
+(global-set-key [A-down] 'other-window)
+(global-set-key [A-up] '(lambda (c) (interactive "p")
+                          (other-window (- c))))
 (global-set-key [s-up] '(lambda (c) (interactive "p")
                           (other-window (- c))))
 (global-set-key [M-up] '(lambda (c) (interactive "p")
@@ -327,7 +330,8 @@ that uses 'font-lock-warning-face'."
 
 ; Ask google3 code to generate appropriately typed file boilerplate
 ; when a new file is created.
-(add-hook 'find-file-not-found-hooks 'autogen)
+(if (featurep 'google)
+    (add-hook 'find-file-not-found-hooks 'autogen))
 
 (add-hook 'c-mode-common-hook
           (lambda ()
