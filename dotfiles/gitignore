@@ -1,0 +1,2 @@
+# Files that I want to keep locally, but don't want tracked.
+*.tdrl_local*

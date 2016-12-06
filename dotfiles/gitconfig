@@ -4,3 +4,7 @@
 [user]
 	name = Terran Lane
 	email = tdrl@google.com
+[core]
+	excludesfile = /Users/tdrl/.gitignore
+[alias]
+	sync = pull --ff-only

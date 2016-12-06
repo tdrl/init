@@ -1,1 +1,22 @@
-function jsgrep() { find ads/google src builtins extensions test examples -name "*.js" -print | xargs grep -il "$@"; }
+function jsgrep() {
+  find \
+    ads/google \
+    src \
+    builtins \
+    extensions \
+    test \
+    testing \
+    build-system \
+    examples \
+    -name "*.js" -print | xargs grep -il "$@";
+}
+function testgoogle() {
+  gulp test \
+    --watch \
+    --files='./{ads/google/a4a,extensions/amp-{a4a,ad{,-network-{doubleclick,adsense,fake}-impl}}}/**/test/*.js'
+}
+function testa4a() {
+  gulp test \
+    --watch \
+    --files='./extensions/amp-a4a/0.1/test/*.js'
+}
