@@ -1,7 +1,2 @@
-alias @OCEAN /ocean/metadata/
-alias @SCRATCH /experimental/users/tdrl
-alias @ESCRATCH /experimental/users/tdrl/events
-alias @EVENTS /quality/events
-alias @SPORE /repository/annotations/spore
-alias @SPORE_AUTH /repository/annotations/spore/authority_builder
-alias @SOLAR /energy/suncatcher/backend/geo
+alias @SCRATCH /experimental/users/tdrl/pubtags/a4a
+alias @EXP /contentads/experiments/config/mendel/studies/cafe/a4a

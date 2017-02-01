@@ -15,3 +15,5 @@ gsutil() { ${HOME}/private/bin/gsutil/gsutil $* ; }
 
 # A better tool for fixing up BUILD files (supposedly?)
 build_cleaner() { /google/data/ro/teams/social-backend/build_cleaner $@; }
+
+iregtest() { /google/data/ro/teams/iregtest/iregtest $@; }

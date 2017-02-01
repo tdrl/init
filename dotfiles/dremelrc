@@ -4,6 +4,11 @@ set csv_dialect posix;
 DEFINE MACRO is_book ($1 in ('/book/book', '/book/written_work'));
 DEFINE MACRO is_empty ($1 IS NULL OR $1 = '');
 DEFINE MACRO not_empty ($1 IS NOT NULL AND $1 != '');
+
+-- GoogleSQL doesn't have a "contains" operator, but it's a more semantic
+-- name to me.
+DEFINE MACRO contains (STRPOS($1, $2) > 0);
+
 -- Thunk a proto structure to a 64-bit int key, capable of joining on.
 -- Only for GoogleSQL dialect.
 DEFINE MACRO struct_to_key FINGERPRINT2011(CAST($1 AS STRING));
