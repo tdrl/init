@@ -431,7 +431,6 @@ that uses 'font-lock-warning-face'."
  ;'(color-theme-selection "Clarity and Beauty")
  '(custom-enabled-themes (quote (wheatgrass)))
  '(dired-listing-switches "-alFh")
- '(google3-build-default-extra-arguments "-c opt")
  '(load-home-init-file t t)
  '(scroll-bar-mode (quote right))
  '(tempo-interactive t)

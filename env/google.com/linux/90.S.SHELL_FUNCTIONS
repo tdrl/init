@@ -31,3 +31,7 @@ buildgws() {
 startgws() {
   ./gws/tools/startgws.py $@;
 }
+
+gcl2db() {
+  /google/data/ro/projects/borg/gcl2db $@;
+}

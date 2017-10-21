@@ -4,6 +4,7 @@ function open() {
   local mime_type=$(file -b --mime-type $1)
   case $mime_type in
     inode/directory) nautilus $1 ;;
+    application/postscript) ;&
     application/pdf) evince $1 & ;;
     image/*) eog $1 & ;;
     application/xml) google-chrome $1 & ;;

@@ -4,10 +4,12 @@
 # GWS (which is so heavyweight that it will kill a normal workstation when
 # trying to build).
 #import /google/src/head/depot/google3/gws/tools/blazerc
-build -c opt
-run -c opt
-# test -c dbg --test_output=all
-test --test_output=all --experimental_log_processor="//devtools/atdbg/tools/binaries:atdbg_log_processor.par"
+build -c opt --fission=yes
+# --fission will include debugging symbols.
+# build --fission=yes
+#run -c opt
+test -c dbg --test_output=all --fission=yes
+# test --test_output=all --experimental_log_processor="//devtools/atdbg/tools/binaries:atdbg_log_processor.par"
 # This was suggested by Yaroslav Bulatov to get incremental build times down:
 #build --link_strategy=local --cc_strategy=local --dynamic_mode=fully # --eager_prefetch_regex=.﻿
 #build --link_strategy=local --cc_strategy=local --dynamic_mode=fully 
