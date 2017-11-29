@@ -152,10 +152,32 @@ fi
 FULL_HOSTNAME=$(hostname -f)
 HOSTNAME_PARTS=($(hostname -f | tr "." " "))
 SHORT_HOSTNAME=${HOSTNAME_PARTS[0]}
-PLACE_TLD=${HOSTNAME_PARTS[${#HOSTNAME_PARTS[@]} - 1]}
-PLACE_ORG=${HOSTNAME_PARTS[${#HOSTNAME_PARTS[@]} - 2]}
-PLACE_SUBNET=${HOSTNAME_PARTS[${#HOSTNAME_PARTS[@]} - 3]}
-PLACE_FULL=${PLACE_SUBNET}.${PLACE_ORG}.${PLACE_TLD}
+if [[ ${#HOSTNAME_PARTS[@]} -eq 1 ]]; then
+    # Bad case.  We don't have a real hostname.  Make a guess about where we
+    # are.
+    case "${SHORT_HOSTNAME}" in
+        ATH*)
+            # athenahealth
+            PLACE_TLD=com
+            PLACE_ORG=athenahealth
+            PLACE_SUBNET=none
+            PLACE_FULL=${PLACE_ORG}.${PLACE_TLD}
+        ;;
+        *)
+            # No idea where we are.
+            echo "UNKNOWN HOSTNAME PATTERN!  NOT IMPLEMENTED"
+            PLACE_TLD=unknown_tld
+            PLACE_ORG=unknown_org
+            PLACE_SUBNET=unknown_subnet
+            PLACE_FULL=${PLACE_SUBNET}.${PLACE_ORG}.${PLACE_TLD}
+        ;;
+    esac
+else
+    PLACE_TLD=${HOSTNAME_PARTS[${#HOSTNAME_PARTS[@]} - 1]}
+    PLACE_ORG=${HOSTNAME_PARTS[${#HOSTNAME_PARTS[@]} - 2]}
+    PLACE_SUBNET=${HOSTNAME_PARTS[${#HOSTNAME_PARTS[@]} - 3]}
+    PLACE_FULL=${PLACE_SUBNET}.${PLACE_ORG}.${PLACE_TLD}
+fi
 if [[ ${FULL_HOSTNAME} =~ google\.com && ${#HOSTNAME_PARTS} -ge 4 ]]; then
   GOOGLE_SITE=${HOSTNAME_PARTS[1]}
   GOOGLE_DOMAIN=${HOSTNAME_PARTS[2]}

@@ -18,11 +18,6 @@
       (push "~/Library/Emacs" load-path)
       )))
 
-;; Google-specific load path; conceivably could have to special-case
-;; this, if this .emacs file ever gets moved back to a non-Google
-;; system.
-;(push "/google/src/head/depot/eng/elisp/" load-path)
-
 ;;;;;;;;;;;;;;;;;;;;
 ;;; Packages that must be loaded for stuff in this file to work
 ;;;;;;;;;;;;;;;;;;;;
@@ -30,28 +25,9 @@
 (require 'cc-mode)
 (require 'filladapt)
 ;(require 'jde)
-(require 'color-theme)
+;(require 'color-theme)
 (require 'info)
 (require 'tempo)
-
-;; Google config stuff
-
-(if (require 'google nil t)
-    (progn
-      (require 'p4-google)
-      (require 'google3)
-      (require 'google3-build)
-      (require 'google-logo)
-      (require 'google-imports)
-      (require 'google-cc-extras)))
-;; *** Google experimental stuff! ***
-; Auto-completion
-;(require 'gcomplete)
-;(gcomplete-setup-flymake)
-;(gcomplete-setup-for-auto-complete)
-; Grok annotations
-;(grok-init)
-;(require 'google-ycmd)
 
 ;; Experimental server configuration
 (if (getenv "DISPLAY")
@@ -163,7 +139,9 @@
                           (other-window (- c))))
 (global-set-key [S-backspace] 'delete-char)
 (global-set-key [M-tab] 'hippie-expand)
-
+(when (boundp 'aquamacs-version)
+  (define-key osx-key-mode-map [end] 'aquamacs-move-end-of-line)
+  (define-key osx-key-mode-map [home] 'aquamacs-move-beginning-of-line))
 ;(message "Init m5")
 
 ;; System-specific key bindings
@@ -183,10 +161,6 @@
 ;     (global-set-key [M-S-backspace] 'kill-word)
      ))
 )
-
-;; Google-specific key bindings
-(if (functionp 'google-cc-extras/bind-default-keys)
-    (google-cc-extras/bind-default-keys))
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;; Global variable settings
@@ -224,7 +198,7 @@
 (setq auto-save-interval 600)
 (setq make-backup-files nil)
 (setq apropos-do-all t)
-;(setq-default filladapt-mode t)
+(setq-default filladapt-mode t)
 ;(setq-default truncate-lines t)
 ;(hscroll-global-mode 1)
 (setq next-line-add-newlines nil)
@@ -234,12 +208,6 @@
 (set-default-file-modes ?\700)
 
 ;; CC-mode variables
-;; let google-coding-style.el define these for us
-;(setq c-style-variables-are-local-p nil)
-;(setq c-basic-offset 2)
-;(setq c-block-comment-prefix "* ")
-;(setq-default c-tab-always-indent 'other)
-;(c-set-offset 'case-label '+)
 
 ;; font-lock-mode configuration
 
@@ -328,14 +296,8 @@ that uses 'font-lock-warning-face'."
 ;(dolist (m '(text-mode-hook emacs-lisp-mode-hook))
 ;  (add-hook m 'turn-on-auto-fill))
 
-; Ask google3 code to generate appropriately typed file boilerplate
-; when a new file is created.
-(if (featurep 'google)
-    (add-hook 'find-file-not-found-hooks 'autogen))
-
 (add-hook 'c-mode-common-hook
           (lambda ()
-            (local-set-key "\C-c\C-c" 'google3-build)
             (local-set-key "\M-/" 'hippie-expand)
             (turn-on-font-lock)
             (setq fill-column 78)
@@ -354,13 +316,18 @@ that uses 'font-lock-warning-face'."
           (lambda ()
             (setq truncate-lines nil)))
 
+(add-hook 'text-mode-hook 'turn-on-filladapt-mode)
 (add-hook 'text-mode-hook
           (lambda ()
             (local-set-key "\C-c\C-t"
                            (lambda () (interactive)
                              (insert "--------------------\n")
                              (tdrl-insert-time-stamp)
-                             (insert "\n")))))
+                             (insert "\n\n- ")
+                             (open-line 2)))
+            (local-set-key [backtab]
+                           (lambda () (interactive)
+                             (backward-delete-char 2)))))
 
 (add-hook 'python-mode-hook
 	  (lambda()
@@ -429,7 +396,7 @@ that uses 'font-lock-warning-face'."
  ;; If there is more than one, they won't work right.
  '(ansi-color-names-vector ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
  ;'(color-theme-selection "Clarity and Beauty")
- '(custom-enabled-themes (quote (wheatgrass)))
+; '(custom-enabled-themes (quote (wheatgrass)))
  '(dired-listing-switches "-alFh")
  '(load-home-init-file t t)
  '(scroll-bar-mode (quote right))

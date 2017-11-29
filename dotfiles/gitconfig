@@ -1,10 +1,8 @@
-[diff]
-	tool = /usr/local/google/home/tdrl/private/bin/bin/p4merge
-	external = /usr/local/google/home/tdrl/private/bin/sh/p4diff4git.sh
 [user]
 	name = Terran Lane
-	email = tdrl@google.com
+	email = telane@athenahealth.com
 [core]
-	excludesfile = /Users/tdrl/.gitignore
+	excludesfile = /Users/telane/.gitignore
+	editor = emacs
 [alias]
 	sync = pull --ff-only
