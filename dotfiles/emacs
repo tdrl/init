@@ -30,7 +30,7 @@
 (require 'tempo)
 
 ;; Experimental server configuration
-(if (getenv "DISPLAY")
+(if (or (getenv "DISPLAY") (eq system-type 'darwin))
     (server-start))
 
 ;;;;;;;;;;;;;;;;;;;;
@@ -232,7 +232,7 @@ that uses 'font-lock-warning-face'."
 (font-lock-add-keywords 'c++-mode (font-lock-width-keyword 80))
 (font-lock-add-keywords 'java-mode (font-lock-width-keyword 100))
 (font-lock-add-keywords 'js-mode (font-lock-width-keyword 80))
-(font-lock-add-keywords 'python-mode (font-lock-width-keyword 80))
+(font-lock-add-keywords 'python-mode (font-lock-width-keyword 100))
 ;; (dolist (mode '(c++-mode java-mode js-mode python-mode))
 ;;   (font-lock-add-keywords mode '(("\t+" (0 'my-tab-face t))
 ;; 				 ("[ \t]+$" (0 'my-trailing-space-face t)))))

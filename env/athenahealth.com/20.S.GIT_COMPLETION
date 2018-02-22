@@ -1,0 +1,3 @@
+if [ -f ${HOME}/private/bin/git-completion.sh ]; then
+   . ${HOME}/private/bin/git-completion.sh
+fi
