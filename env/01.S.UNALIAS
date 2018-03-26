@@ -1,0 +1,3 @@
+# Paranoia: Clear any existing aliases, to prevent them from
+# colliding with anything we're about to do.
+unalias -a
