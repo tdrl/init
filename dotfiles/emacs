@@ -327,7 +327,10 @@ that uses 'font-lock-warning-face'."
                              (open-line 2)))
             (local-set-key [backtab]
                            (lambda () (interactive)
-                             (backward-delete-char 2)))))
+                             (let ((here (point)))
+                               (beginning-of-line)
+                               (delete-forward-char 2)
+                               (goto-char (- here 2)))))))
 
 (add-hook 'python-mode-hook
 	  (lambda()
