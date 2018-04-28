@@ -31,7 +31,8 @@ function truncate_path() {
 
 # Intelligently rewrite the current working directory for display.  This:
 #   - Replaces the home directory with ~
-#   - Replaces CitC clients with :clientname://
+#   - Replaces git repo dirs with :repo(branch)://
+#   - Replaces CitC (Perforce) clients with :clientname://
 #   - Leaves other paths unchanged
 # and truncates any paths longer than $PROMPT_DIRTRIM elements long.
 function get_condensed_path() {

@@ -1,0 +1,3 @@
+function sso() {
+  ${HOME}/.local/bin/aws_sso $@
+}
