@@ -1,0 +1,8 @@
+if [ ! -d "/remote/${USER}" ]; then
+   echo "Can't find /remote/${USER} -- no TMPDIR possible!"
+else
+   export TMPDIR=/remote/${USER}/tmp
+   if [ ! -d "${TMPDIR}" ]; then
+      mkdir -p "${TMPDIR}"
+   fi
+fi
