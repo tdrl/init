@@ -12,6 +12,9 @@
 ;;; Update the load path
 ;;;;;;;;;;;;;;;;;;;;
 
+(if (file-directory-p "~/.init/elisp")
+    (setq load-path (append load-path '("~/.init/elisp"))))
+
 (case system-type
   ((darwin apple-macosx)
     (progn
