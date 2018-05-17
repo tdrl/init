@@ -1,4 +1,5 @@
 export TDRL_EC2_IP=10.130.196.54
+export TDRL_ATHENADEV=dev110.athenahealth.com
 
 # Shortcut to SSO.
 function sso() {
@@ -10,8 +11,21 @@ function ssh_ec2() {
   ssh jump.us-east-1.aws.athenahealth.com -A -t ssh ${TDRL_EC2_IP}
 }
 
-# Synchronize the state of the .init directory, excluding .git components, with the EC2 version.
+# Similar shortcut to dev.
+function ssh_dev() {
+  ssh ${TDRL_ATHENADEV}
+}
+
+# Synchronize the state of the .init directory, excluding .git components,
+# with the EC2 and athenadev versions.
 function initsync() {
+         rsync \
+               --filter=':- .gitignore' \
+               --exclude '*.ipynb' \
+               --exclude '.git*' \
+               --delete-after \
+               -avz \
+               "${HOME}/.init/" "${TDRL_ATHENADEV}:.init"
          rsync \
                --filter=':- .gitignore' \
                --exclude '*.ipynb' \
