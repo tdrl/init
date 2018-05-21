@@ -35,3 +35,8 @@ function initsync() {
                -e 'ssh jump.us-east-1.aws.athenahealth.com -A -t ssh' \
                "${HOME}/.init/" "${TDRL_EC2_IP}:.init"
 }
+
+# Abbreviation for s3 ops.
+function fll() {
+  aws s3 ls --human-readable $@
+}
