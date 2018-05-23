@@ -1,0 +1,4 @@
+# Abbreviation for s3 ops.
+function fll() {
+  aws s3 ls --human-readable $@
+}
