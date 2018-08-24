@@ -1,14 +1,18 @@
+# IP addr for my instance in Datascience legacy pod.
 export TDRL_EC2_IP=10.130.196.54
+# IP addr for my instance in a.i Dev pod.
+export TDRL_EC2_IP_AI_DEV=10.134.39.75
 export TDRL_ATHENADEV=dev110.athenahealth.com
+export ATHN_JUMPHOST=jump.us-east-1.dev.ai.aws.athenahealth.com
 
 # Shortcut to SSO.
 function sso() {
-  ${HOME}/.local/bin/aws_sso $@
+  ${HOME}/private/bin/miniconda3/envs/aws/bin/aws_sso $@
 }
 
 # Single-command ssh to remote EC2 by bouncing off the jump host.
 function ssh_ec2() {
-  ssh jump.us-east-1.aws.athenahealth.com -A -t ssh ${TDRL_EC2_IP}
+  ssh ${ATHN_JUMPHOST} -A -t ssh ${TDRL_EC2_IP_AI_DEV}
 }
 
 # Similar shortcut to dev.
@@ -32,8 +36,16 @@ function initsync() {
                --exclude '.git*' \
                --delete-after \
                -avz \
-               -e 'ssh jump.us-east-1.aws.athenahealth.com -A -t ssh' \
+               -e 'ssh ${ATHN_JUMPHOST} -A -t ssh' \
                "${HOME}/.init/" "${TDRL_EC2_IP}:.init"
+}
+
+# Synchronize AWS credentials to EC2 instance.
+function credsync() {
+         rsync \
+               -avz \
+               -e 'ssh jump.us-east-1.aws.athenahealth.com -A -t ssh' \
+               "${HOME}/.aws/" "${TDRL_EC2_IP}:.aws"
 }
 
 # Abbreviation for s3 ops.
