@@ -10,3 +10,4 @@
 	status = auto
 	branch = auto
 	interactive = auto
+	diff = auto
