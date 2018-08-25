@@ -1,0 +1,26 @@
+# -*- shell-script -*-
+
+# Command-line completion twiddles
+complete -d cd
+complete -d rd
+complete -W "-name -iname -print -exec -perm -type -atime" find
+
+# And a very sophisticated bash completer for svn
+if [ -f ${HOME}/private/bin/svncomplete.sh ]; then
+    . ${HOME}/private/bin/svncomplete.sh
+fi
+
+git_completion_paths=(
+  /usr/local/git/contrib/completion
+  ${HOME}/private/bin
+  /usr/local/git/current/share/git-core
+)
+
+for place in ${git_completion_paths[@]}; do
+  if [ -f ${place}/git-completion.sh ]; then
+    . ${place}/git-completion.sh
+    break
+  fi
+done
+
+unset git_completion_paths

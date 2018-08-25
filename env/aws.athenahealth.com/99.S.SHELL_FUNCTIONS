@@ -2,3 +2,7 @@
 function fll() {
   aws s3 ls --human-readable $@
 }
+
+function ct() {
+  cd ${TMPDIR:-/tmp}
+}

@@ -6,3 +6,5 @@
 	editor = emacs
 [alias]
 	sync = pull --ff-only
+[color]
+	status = auto
