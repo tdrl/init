@@ -8,3 +8,5 @@
 	sync = pull --ff-only
 [color]
 	status = auto
+	branch = auto
+	interactive = auto
