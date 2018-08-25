@@ -12,7 +12,7 @@ function sso() {
 
 # Single-command ssh to remote EC2 by bouncing off the jump host.
 function ssh_ec2() {
-  ssh ${ATHN_JUMPHOST} -A -t ssh ${TDRL_EC2_IP_AI_DEV}
+  ssh -oProxyJump=${ATHN_JUMPHOST} ${TDRL_EC2_IP_AI_DEV}
 }
 
 # Similar shortcut to dev.
@@ -45,7 +45,12 @@ function credsync() {
          rsync \
                -avz \
                -e 'ssh jump.us-east-1.aws.athenahealth.com -A -t ssh' \
-               "${HOME}/.aws/" "${TDRL_EC2_IP}:.aws"
+               "${HOME}/.aws/" "${TDRL_EC2_IP_AI_DEV}:.aws"
+}
+
+# Copy file from local to EC2 instance.
+function scp_ec2() {
+  scp -oProxyJump=${ATHN_JUMPHOST} $@ 
 }
 
 # Abbreviation for s3 ops.
