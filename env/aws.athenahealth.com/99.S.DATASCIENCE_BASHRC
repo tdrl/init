@@ -1,1 +1,4 @@
-source /home/datascience/.bashrc
+if [ -f /home/datascience/.bashrc ]; then
+   source /home/datascience/.bashrc
+fi
+
