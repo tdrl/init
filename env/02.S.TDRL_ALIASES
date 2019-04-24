@@ -1,12 +1,12 @@
 # -*- shell-script -*-
 
-function m() { more $@ ; }
-function k() { less $@ ; }
-function md() { mkdir $@ ; }
-function rd() { rmdir $@ ; }
+function m() { more "$@" ; }
+function k() { less "$@" ; }
+function md() { mkdir "$@" ; }
+function rd() { rmdir "$@" ; }
 function z() { exit ; }
-function com() { gzip $@ ; }
-function uc() { gunzip $@ ; }
+function com() { gzip "$@"; }
+function uc() { gunzip "$@" ; }
 function h() { history ; }
 function push() { pushd . ; }
 function pop() { popd ; }
@@ -15,6 +15,4 @@ function cnun() { chmod -R go-rwx . ; }
 function lperm() { chgrp -R ml . ; chmod -R g+rwX,o+rX . ; }
 function wipe() { srm -mzv "$@" ; }
 function ct() { cd /tmp/${USER} ; }
-function uc() { gunzip $* ; }
-function co() { gzip $* ; }
-function zk() { zcat $* | less -EFmQRX ; }
+function zk() { zcat "$@" | less -EFmQRX ; }
