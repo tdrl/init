@@ -11,8 +11,8 @@ for dotfile in ${HOME}/.init/dotfiles/*; do
   echo -ne "\t${f}...  "
   if [ -h ${f} ]; then
     echo -n "Exists as a symlink.  Leaving alone... "
-  elif [ -f ${f} ]; then
-    echo -n "Exists as a regular file.  Backing up... "
+  elif [ -f ${f} -o -d ${f} ]; then
+    echo -n "Exists as a regular file or directory.  Backing up... "
     if [ ! -d ${BACKUP_DIR} ]; then
       mkdir -p ${BACKUP_DIR}
     fi
