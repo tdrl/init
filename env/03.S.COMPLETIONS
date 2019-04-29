@@ -11,14 +11,15 @@ if [ -f ${HOME}/private/bin/svncomplete.sh ]; then
 fi
 
 git_completion_paths=(
-  /usr/local/git/contrib/completion
-  ${HOME}/private/bin
-  /usr/local/git/current/share/git-core
+  /usr/local/git/contrib/completion/git-completion.sh
+  ${HOME}/private/bin/git-completion.sh
+  /usr/local/git/current/share/git-core/git-completion.sh
+  /usr/local/git/contrib/completion/git-completion.bash
 )
 
-for place in ${git_completion_paths[@]}; do
-  if [ -f ${place}/git-completion.sh ]; then
-    . ${place}/git-completion.sh
+for file in ${git_completion_paths[@]}; do
+  if [ -f ${file} ]; then
+    . ${file}
     break
   fi
 done

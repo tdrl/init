@@ -1,17 +1,29 @@
 # -*- shell-script -*-
 # Prompt setup
 
-if [ -f /usr/local/git/current/share/git-core/git-prompt.sh ]; then
-  . /usr/local/git/current/share/git-core/git-prompt.sh
-elif [ -f /etc/bash_completion.d/git-prompt ]; then
-    . /etc/bash_completion.d/git-prompt
-elif [ -f ${HOME}/private/bin/git-prompt.sh ]; then
-    . ${HOME}/private/bin/git-prompt.sh
-else
+__GIT_PROMPT_LOCATIONS=(
+    /usr/local/git/current/share/git-core/git-prompt.sh
+    /etc/bash_completion.d/git-prompt
+    ${HOME}/private/bin/git-prompt.sh
+    /usr/local/git/contrib/completion/git-prompt.sh
+)
+
+__git_script_found=0
+for loc in ${__GIT_PROMPT_LOCATIONS[@]}; do
+    if [ -f "${loc}" ]; then
+        . "${loc}"
+        __git_script_found=1
+        break
+    fi
+done
+if (( ! __git_script_found )); then
   function __git_ps1() {
     true
   }
 fi
+
+unset __GIT_PROMPT_LOCATIONS
+unset __git_script_found
 
 # Truncate a pathname that is longer than $PROMPT_DIRTRIM elements long;
 # otherwise, return the original unchanged.
