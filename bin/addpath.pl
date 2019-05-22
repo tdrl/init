@@ -127,7 +127,7 @@ for ($i=0;$i<=$#ARGV;++$i) {
 # Note: we still don't handle the "~user" syntax, nor do we try to do the
 # funky nested-brace expansion that csh does.
 for ($i=0;$i<=$#newelts;++$i) {
-  $newelts[$i]=~s/\$(\w+)|\${(\w+)}/exists($ENV{$+})?$ENV{$+}:"\${$+}"/ge;
+  $newelts[$i]=~s/\$(\w+)|\$\{(\w+)\}/exists($ENV{$+})?$ENV{$+}:"\${$+}"/ge;
   $newelts[$i]=~s/\A(~(?=\/)|~\Z)/exists($ENV{HOME})?$ENV{HOME}:"\${HOME}"/e;
 }
 
