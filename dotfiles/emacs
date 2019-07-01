@@ -412,7 +412,7 @@ that uses 'font-lock-warning-face'."
  '(ansi-color-names-vector ["#242424" "#e5786d" "#95e454" "#cae682" "#8ac6f2" "#333366" "#ccaa8f" "#f6f3e8"])
  ;'(color-theme-selection "Clarity and Beauty")
 ; '(custom-enabled-themes (quote (wheatgrass)))
- '(dired-listing-switches "-alFh")
+ '(dired-listing-switches "-oahFG")
  '(load-home-init-file t t)
  '(scroll-bar-mode (quote right))
  '(tempo-interactive t)
