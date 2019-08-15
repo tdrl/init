@@ -56,8 +56,9 @@ function get_condensed_path() {
     elif [[ ! -z "$git_branch" ]]; then
       # We don't want to show the full path -- only the bit relative to the
       # current git repo root.
-      truncated="$(truncate_path $(git rev-parse --show-prefix))"
-      local repo=$(basename $(git rev-parse --show-toplevel))
+      local truncated="$(truncate_path $(git rev-parse --show-prefix))"
+      local git_repo_fullpath=$(git rev-parse --show-toplevel)
+      local repo=$(basename ${git_repo_fullpath:-UNKNOWN})
       DISPLAY_PATH=":${repo}${git_branch}://${truncated}"
     else
       DISPLAY_PATH="~/${truncated}"
