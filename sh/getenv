@@ -1,7 +1,7 @@
 #!/bin/false -*- shell-script -*-
 # DO NOT EXECUTE THIS FILE!  Only source it...
 
-# Copyright Terran Lane 1997-2018
+# Copyright Terran Lane 1997-2019
 
 # Barrier to prevent re-execution.  Clear this if you want to re-initialize
 # the shell vars.
@@ -172,6 +172,14 @@ if [[ ${#HOSTNAME_PARTS[@]} -eq 1 ]]; then
             PLACE_FULL=${PLACE_SUBNET}.${PLACE_ORG}.${PLACE_TLD}
         ;;
     esac
+elif [[ ${#HOSTNAME_PARTS[@]} -eq 2 && ${HOSTNAME_PARTS[1]} = "local" ]]; then
+    # Special case for personal mac.  This machine exists mostly on a
+    # local subnet that we run personally.  It doesn't have a proper
+    # domain name per se, so manually cobble one together.
+    PLACE_TLD=net
+    PLACE_ORG=illation    # illation.net is the Rati Lane personal domain.
+    PLACE_SUBNET=local
+    PLACE_FULL=${PLACE_SUBNET}.${PLACE_ORG}.${PLACE_TLD}
 else
     PLACE_TLD=${HOSTNAME_PARTS[${#HOSTNAME_PARTS[@]} - 1]}
     PLACE_ORG=${HOSTNAME_PARTS[${#HOSTNAME_PARTS[@]} - 2]}
