@@ -40,7 +40,7 @@ _conda_complete() {
             case ${prev} in
                 activate|deactivate)
                     COMPREPLY=()
-                    for _x in $(compgen -d ${HOME}/private/bin/miniconda3/envs/); do
+                    for _x in $(compgen -d ${HOME}/private/bin/miniconda3/envs/${cur}); do
                         COMPREPLY+=($(basename ${_x}))
                     done
                     ;;
