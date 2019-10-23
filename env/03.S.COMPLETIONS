@@ -25,3 +25,32 @@ for file in ${git_completion_paths[@]}; do
 done
 
 unset git_completion_paths
+
+# Personal completer for conda
+_conda_complete() {
+    local cur prev
+    cur=${COMP_WORDS[COMP_CWORD]}
+    prev=${COMP_WORDS[COMP_CWORD-1]}
+
+    case ${COMP_CWORD} in
+        1)
+            COMPREPLY=($(compgen -W "activate deactivate env create update help" -- ${cur}))
+            ;;
+        2)
+            case ${prev} in
+                activate|deactivate)
+                    COMPREPLY=()
+                    for _x in $(compgen -d ${HOME}/private/bin/miniconda3/envs/${cur}); do
+                        COMPREPLY+=($(basename ${_x}))
+                    done
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            ;;
+        *)
+            COMPREPLY=()
+    esac
+}
+complete -F _conda_complete conda
