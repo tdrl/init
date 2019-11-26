@@ -1,0 +1,3 @@
+awst() {
+  python ${HOME}/private/bin/python/awst.py "$@"
+}

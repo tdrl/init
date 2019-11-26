@@ -1,8 +1,8 @@
 [user]
 	name = Terran Lane
-	email = telane@athenahealth.com
+	email = tlane@fl65inc.com
 [core]
-	excludesfile = /Users/telane/.gitignore
+	excludesfile = /Users/terranlane/.gitignore
 	editor = emacs
 	pager = less -R
 [alias]
@@ -12,3 +12,5 @@
 	branch = auto
 	interactive = auto
 	diff = auto
+[push]
+	default = simple
