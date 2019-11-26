@@ -2,7 +2,7 @@
 	name = Terran Lane
 	email = tlane@fl65inc.com
 [core]
-	excludesfile = /Users/terranlane/.gitignore
+	excludesfile = ~/.gitignore
 	editor = emacs
 	pager = less -R
 [alias]
