@@ -6,6 +6,8 @@ if [ $? -eq 0 ]; then
 else
     if [ -f "/home/tlane/anaconda3/etc/profile.d/conda.sh" ]; then
         . "/home/tlane/anaconda3/etc/profile.d/conda.sh"
+    elif [ -f "/home/ubuntu/anaconda3/etc/profile.d/conda.sh" ]; then
+      . /home/ubuntu/anaconda3/etc/profile.d/conda.sh
     else
         export PATH="/home/tlane/anaconda3/bin:$PATH"
     fi
