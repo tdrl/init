@@ -5,6 +5,7 @@
 	excludesfile = ~/.gitignore
 	editor = emacs
 	pager = less -R
+	autocrlf = input
 [alias]
 	sync = pull --ff-only
 [color]
