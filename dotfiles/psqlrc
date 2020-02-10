@@ -1,5 +1,8 @@
 \set QUIET 1
-\set PROMPT1 '(psql) %033[1;31m%]%n@%/%033[0m%]%R%# '
+-- Would like to do this in color, but at the moment that seems to be messing up
+-- line wrapping.
+-- \set PROMPT1 '(psql) %033[1;31m%]%n@%/%033[0m%]%R%# '
+\set PROMPT1 '(psql) %n@%/%R%# '
 \timing
 \set PROMPT2 '%R%# '
 \set HISTSIZE 20000
