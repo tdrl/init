@@ -1,0 +1,6 @@
+\set QUIET 1
+\set PROMPT1 '(psql) %033[1;31m%]%n@%/%033[0m%]%R%# '
+\timing
+\set PROMPT2 '%R%# '
+\set HISTSIZE 20000
+\set QUIET 0
