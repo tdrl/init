@@ -1,3 +1,7 @@
 awst() {
   python ${HOME}/private/bin/python/awst.py "$@"
 }
+
+fll() {
+  aws s3 ls --human "$@"
+}

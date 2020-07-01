@@ -4,3 +4,6 @@ ec2_info() {
 die() {
   sudo shutdown -h now
 }
+fll() {
+  aws s3 ls --human "$@"
+}
