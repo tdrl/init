@@ -7,3 +7,7 @@ die() {
 fll() {
   aws s3 ls --human "$@"
 }
+fcp() {
+  aws s3 cp "$@"
+}
+  
