@@ -1,0 +1,6 @@
+# Note: In recent Bash versions, the "test" primitive accepts a "-v" flag that tests the existence of a
+# variable.  Unfortunately, Apple is still stuck in the stone age (using Bash v. 3.2.x), so we need to use
+# an older idiom to check the existence of this variable.
+if [ -z "${SSH_AUTH_SOCK+x}" ]; then
+   eval $(ssh-agent)
+fi
