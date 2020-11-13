@@ -3,6 +3,13 @@
 # Install all shell / config files.
 
 BACKUP_DIR="${HOME}/.dotfile_backups/$(date "+%Y%m%d_%H%M")"
+DIR_TREE=(
+  .ssh
+  private/bin
+  private/src
+  tmp
+  work
+)
 
 cd ${HOME}
 echo "Installing..."
@@ -27,3 +34,15 @@ for dotfile in ${HOME}/.init/dotfiles/*; do
   fi
   echo "Done."
 done
+
+echo "Setting up directory tree..."
+for target_dir in ${DIR_TREE[*]}; do
+  echo "mkdir ${HOME}/${target_dir}"
+  mkdir -p ${HOME}/${target_dir}
+done
+
+if [ ! -d ${HOME}/private/src/tools ]; then
+  echo "Installing local tools..."
+  cd ${HOME}/private/src
+  git clone git@github.com:tdrl/tools.git
+fi
