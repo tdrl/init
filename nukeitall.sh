@@ -16,7 +16,7 @@ if [ -x /usr/bin/srm ]; then
     }
 elif [ -x /bin/rm ]; then
     zorch() {
-        nohup /bin/rm -rfP "$*" >> "${LOGFILE}" 2>&1 ;
+        nohup /bin/rm -rfP -- "$*" >> "${LOGFILE}" 2>&1 ;
     }
 fi
 
