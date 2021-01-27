@@ -1,6 +1,6 @@
 [user]
 	name = Heather Lane
-	email = heather@illation.net
+	email = hlane@athenahealth.com
 [core]
 	excludesfile = ~/.gitignore
 	editor = emacs
@@ -15,3 +15,7 @@
 	diff = auto
 [push]
 	default = simple
+[credential]
+	helper = osxkeychain
+[includeIf "gitdir:~/work/"]
+           path = ~/.athena_gitconfig

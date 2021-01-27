@@ -25,4 +25,3 @@ fi
 if [ -x "$HOME/.init/sh/getenv" ] ; then
     . ${HOME}/.init/sh/getenv
 fi
-

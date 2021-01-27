@@ -4,3 +4,4 @@
 *.egg-info
 .idea
 *scratch*
+dask-worker-space
