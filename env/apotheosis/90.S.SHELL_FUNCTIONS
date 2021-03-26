@@ -1,0 +1,6 @@
+smallify() {
+  for f in "$@"; do
+      echo "Smallifying $f..."
+      convert -resize '30%' "$f" "${f%.*}.small.${f#*.}"
+  done
+}

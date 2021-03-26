@@ -1,0 +1,13 @@
+# A tool to reset the bluetooth on a mac from the keyboard.
+
+btreset() {
+  if ( which blueutil > /dev/null ); then
+    echo "Resetting bluetooth..."
+    blueutil -p 0
+    sleep 3
+    blueutil -p 1
+    echo "Done!"
+  else
+    echo "No blueutil command found.  Install via 'brew install blueutil'"
+  fi
+} 
