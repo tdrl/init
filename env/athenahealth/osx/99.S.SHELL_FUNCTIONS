@@ -7,7 +7,7 @@ export ATHN_JUMPHOST=jump.us-east-1.dev.ai.aws.athenahealth.com
 
 # Shortcut to SSO.
 function sso() {
-  ${HOME}/private/bin/miniconda3/envs/aws/bin/aws_sso $@
+  /usr/local/bin/aws-azure-login $@
 }
 
 # Single-command ssh to remote EC2 by bouncing off the jump host.

@@ -1,2 +1,2 @@
 # Dynamically find Java, but select the 1.8 version, which is necessary for Spark.
-export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
+#export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
