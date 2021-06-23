@@ -14,5 +14,10 @@ function perm() { chmod -R go+rX . ; }
 function cnun() { chmod -R go-rwx . ; }
 function lperm() { chgrp -R ml . ; chmod -R g+rwX,o+rX . ; }
 function wipe() { srm -mzv "$@" ; }
-function ct() { cd /tmp/${USER} ; }
+function ct() {
+    if [ ! -d /tmp/${USER} ]; then
+           mkdir /tmp/${USER}
+    fi
+    cd /tmp/${USER} ;
+}
 function zk() { zcat "$@" | less -EFmQRX ; }

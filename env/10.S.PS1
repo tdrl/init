@@ -6,6 +6,7 @@ __GIT_PROMPT_LOCATIONS=(
     /etc/bash_completion.d/git-prompt
     ${HOME}/private/bin/git-prompt.sh
     /usr/local/git/contrib/completion/git-prompt.sh
+    /Library/Developer/CommandLineTools/usr/share/git-core/git-prompt.sh
 )
 
 __git_script_found=0
