@@ -1,7 +1,7 @@
 #!/bin/false -*- shell-script -*-
 # DO NOT EXECUTE THIS FILE!  Only source it...
 
-# Copyright Terran Lane 1997-2019
+# Copyright Terran Lane, Heather Lane 1997-2024
 
 # Barrier to prevent re-execution.  Clear this if you want to re-initialize
 # the shell vars.
@@ -19,9 +19,15 @@ varprog=${bindir}/addpath.pl
 # in SH, of course, but I don't think it has the pushd/popd shell
 # commands.  Plus, I don't know anybody who actually runs plain-ol' SH
 # anymore.)
-if [[ ! $SHELL =~ bash$ ]]; then
-   echo "Init startup scripts supported in bash, but not sh or zsh"
+if [[ ! ("$SHELL" =~ "bash$" || "$SHELL" =~ "zsh$") ]]; then
+   echo "Init startup scripts supported in bash and zsh, but not sh or csh"
    return 1
+fi
+
+if [[ "$SHELL" =~ "zsh$" ]]; then
+    __array_index=1
+else;
+    __array_index=0
 fi
 
 # Some helper functions.
@@ -86,9 +92,15 @@ init::internal::recurse() {
   done
 
   # Now recurse into directories.
-  for name in $dirlist; do
-      if [[ -d ${name} && -x ${name} ]]; then
-	  init::internal::recurse ${name}
+  # for name in $dirlist; do
+  #     if [[ -d ${name} && -x ${name} ]]; then
+  #         init::internal::recurse ${name}
+  #     fi
+  # done
+  for name in $(find . -depth 1 -type d -print); do
+      # Character classes don't seem to be handled, so hack it with alternation.
+      if [[ -x "${name}" && "${dirlist}" =~ "(^| )${name#\./}( |$)" ]]; then
+          init::internal::recurse "${name}"
       fi
   done
 
@@ -117,6 +129,9 @@ if [ "x$ARCH" = "x" ]; then
     sun4u)
       ARCH=sparc
       ;;
+    arm64)
+        ARCH=arm
+        ;;
     *)
       ARCH=arch_unknown
       ;;
@@ -135,6 +150,9 @@ if [ "x$ARCH_BITS" = "x" ]; then
     sun4u)
       ARCH_BITS=32
       ;;
+    ar64)
+        ARCH_BITS=64
+        ;;
     *)
       ARCH_BITS=64   # reasonable default in the modern world
       ;;
@@ -151,7 +169,7 @@ fi
 # personal knowledge of common practice.
 FULL_HOSTNAME=$(hostname -f)
 HOSTNAME_PARTS=($(hostname -f | tr "." " "))
-SHORT_HOSTNAME=${HOSTNAME_PARTS[0]}
+SHORT_HOSTNAME=${HOSTNAME_PARTS[$__array_index]}
 if [[ ${#HOSTNAME_PARTS[@]} -eq 1 ]]; then
     # Bad case.  We don't have a real hostname.  Make a guess about where we
     # are.

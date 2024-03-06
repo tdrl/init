@@ -99,8 +99,12 @@ if [[ "${TERM}" =~ "screen" ]]; then
 else
   PROMPT_SC=""
 fi
-PROMPT_HOSTNAME=${SHORT_HOSTNAME:-unknown}
+PROMPT_HOSTNAME="${SHORT_HOSTNAME:-unknown}"
 if [ ! -z "${PLACE_SUBNET}" ]; then
     PROMPT_HOSTNAME+=".${PLACE_SUBNET}"
 fi
-PS1="<\[${prompt_mode_bold}${prompt_color_red}\]\u@\${PROMPT_HOSTNAME}\${PROMPT_SC}\[${prompt_color_reset}${prompt_mode_reset}\]>[\[${prompt_mode_bold}${prompt_color_blue}\]\${DISPLAY_PATH}\[${prompt_color_reset}${prompt_mode_reset}\]]\\$ "
+if [[ "${SHELL}" =~ "bash$" ]]; then
+    PS1="<\[${prompt_mode_bold}${prompt_color_red}\]\u@\${PROMPT_HOSTNAME}\${PROMPT_SC}\[${prompt_color_reset}${prompt_mode_reset}\]>[\[${prompt_mode_bold}${prompt_color_blue}\]\${DISPLAY_PATH}\[${prompt_color_reset}${prompt_mode_reset}\]]\\$ "
+elif [[ "${SHELL}" =~ "zsh$" ]]; then
+    PS1='<%F{red}%B%m%b%f>[%F{blue}%3~%f]%(!.#.$) '
+fi
