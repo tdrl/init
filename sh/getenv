@@ -26,17 +26,21 @@ fi
 
 if [[ "$SHELL" =~ "zsh$" ]]; then
     __array_index=1
+    OS_SHELL='zsh'
 else;
     __array_index=0
+    OS_SHELL='bash'
 fi
 
 # Some helper functions.
 if [ $DEBUG ]; then
    init::internal::pushd() { pushd $1 ; }
    init::internal::popd() { popd ; }
+   init::log::debug() { echo -e "$@"; }
 else
    init::internal::pushd() { pushd $1 > /dev/null ; }
    init::internal::popd() { popd > /dev/null ; }
+   init::log::debug() {}
 fi
 
 # Do the appropriate thing with a single file name.  Assumes that
@@ -46,28 +50,26 @@ init::internal::handle_fname() {
   # The ${1##*.} magic is BASH for "extract the part
   # of the variable $1 trailing the final dot"
   local vname=${1##*.}
-  if (( DEBUG )); then
-    echo "Handling $1"
-  fi
+  init::log::debug "Handling $1"
   case $1 in
        [0-9][0-9].F.* )  # Handle prepend variables
-           if (( DEBUG )); then echo -e "\tPrepend"; fi
+           init::log::debug "\tPrepend"
 	   eval "export ${vname}='$(${varprog} -v ${vname} -F -i ${1} -x -f :)'"
 	   ;;
        [0-9][0-9].B.* )  # Handle append variables
-           if (( DEBUG )); then echo -e "\tAppend"; fi
+           init::log::debug "\tAppend"
            eval "export ${vname}='`${varprog} -v ${vname} -B -i ${1} -x -f :`'"
            ;;
        [0-9][0-9].R.* )  # Handle replace variables
-           if (( DEBUG )); then echo -e "\tReplace"; fi
+           init::log::debug "\tReplace"
            eval "export ${vname}='`${varprog} -i ${1} -x -f :`'"
            ;;
        [0-9][0-9].S.* )  # Handle source directly files
-           if (( DEBUG )); then echo -e "\tSource"; fi
+           init::log::debug "\tSource"
            . ./${1}
 	   ;;
        [0-9][0-9].X.* )  # Handle shell code execution
-           if (( DEBUG )); then echo -e "\tExecute"; fi
+           init::log::debug "\tExecute"
            ./${1}
            ;;
        * )   # default
@@ -92,15 +94,13 @@ init::internal::recurse() {
   done
 
   # Now recurse into directories.
-  # for name in $dirlist; do
-  #     if [[ -d ${name} && -x ${name} ]]; then
-  #         init::internal::recurse ${name}
-  #     fi
-  # done
   for name in $(find . -depth 1 -type d -print); do
       # Character classes don't seem to be handled, so hack it with alternation.
       if [[ -x "${name}" && "${dirlist}" =~ "(^| )${name#\./}( |$)" ]]; then
+          init::log::debug "Recursing into ${name}"
           init::internal::recurse "${name}"
+      else
+          init::log::debug "${name} not found in current config; skipping."
       fi
   done
 
@@ -218,6 +218,26 @@ USER=${USER:-$(whoami)}
 export DOMAIN SHORT_DOMAIN FULL_HOSTNAME SHORT_HOSTNAME USER PLACE_TLD \
     PLACE_ENTITY PLACE_SUBNET PLACE_FULL GOOGLE_SITE GOOGLE_DOMAIN
 
+init::log::debug "Configuration: {"
+init::log::debug $(cat <<EOF
+        ARCH=${ARCH}
+	OS=${OS}
+	DOMAIN=${DOMAIN}
+	SHORT_DOMAIN=${SHORT_DOMAIN}
+	FULL_HOSTNAME=${FULL_HOSTNAME}
+	SHORT_HOSTNAME=${SHORT_HOSTNAME}
+	PLACE_ORG=${PLACE_ORG}
+	PLACE_SUBNET=${PLACE_SUBNET}
+	PLACE_FULL=${PLACE_FULL}
+	USER=${USER}
+        ARCH_BITS=b${ARCH_BITS}
+	GOOGLE_SITE=${GOOGLE_SITE}
+	GOOGLE_DOMAIN=${GOOGLE_DOMAIN}
+	OS_SHELL=${OS_SHELL}
+EOF
+)
+init::log::debug "}"
+
 # This list can contain duplicates (e.g., when USER==SHORT_HOSTNAME)
 # which leads to multiple execution of the same code.  So we
 # de-duplicate the directory traversal list before starting the
@@ -236,6 +256,7 @@ $USER
 b${ARCH_BITS}
 $GOOGLE_SITE
 $GOOGLE_DOMAIN
+$OS_SHELL
 EOF
 )
 
