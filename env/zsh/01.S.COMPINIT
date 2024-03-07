@@ -1,0 +1,2 @@
+fpath=(~/private/etc/zsh $fpath)
+autoload -Uz compinit; compinit
