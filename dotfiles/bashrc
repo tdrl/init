@@ -19,7 +19,7 @@ fi
 
 # First, configure environment variables and other system-specific
 # functionality (if it hasn't previously been executed)
-inittop=${HOME}/.init/sh/getenv
-if [ -f ${inittop} ]; then
-    . ${inittop}
+inittop="${HOME}/.init/sh/getenv"
+if [ -f "${inittop}" ]; then
+    . "${inittop}"
 fi
