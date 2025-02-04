@@ -2,3 +2,9 @@
 export CLICOLOR_FORCE=1
 ll() { ls -oahFG "$@" | less -EFmQRX ; }
 lf() { ls -ohFG "$@" | less -EFmQRX ; }
+
+if type code > /dev/null 2>&1; then
+   hdiff() { code -n --diff "$@" ; }
+   alias vdiff=hdiff
+fi
+   

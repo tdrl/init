@@ -1,0 +1,3 @@
+# Fix zsh's notion of a word delimiter so that backward-kill-word only takes a path component and not the
+# whole path in a single go.
+WORDCHARS="${WORDCHARS/\//}"

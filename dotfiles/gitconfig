@@ -19,3 +19,5 @@
 	helper = osxkeychain
 [includeIf "gitdir:~/work/"]
            path = ~/.athena_gitconfig
+[pull]
+	rebase = false
