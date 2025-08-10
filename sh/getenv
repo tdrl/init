@@ -100,7 +100,7 @@ init::internal::recurse() {
   done
 
   # Now recurse into directories.
-  for name in $(find . -depth 1 -type d -print); do
+  for name in $(find -L . -depth 1 -type d -print); do
       # Character classes don't seem to be handled, so hack it with alternation.
       if [[ -x "${name}" && "${dirlist}" =~ "(^| )${name#\./}( |$)" ]]; then
           init::log::debug "Recursing into ${name}"

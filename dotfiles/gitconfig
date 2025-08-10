@@ -19,3 +19,9 @@
 	helper = osxkeychain
 [includeIf "gitdir:~/work/"]
            path = ~/.athena_gitconfig
+[includeIf "gitdir:~/private/src/"]
+           path = ~/.personal_gitconfig
+[includeIf "gitdir:~/private/docs/"]
+           path = ~/.personal_gitconfig
+[init]
+	defaultBranch = main

@@ -1,7 +1,11 @@
 # Files that I want to keep locally, but don't want tracked.
 *.tdrl_local*
+*.hrl_local*
+*.htrl_local*
 .cache
 *.egg-info
 .idea
 *scratch*
 dask-worker-space
+.svn/
+.DS_Store
