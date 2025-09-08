@@ -1,0 +1,7 @@
+# Clean up completed Git branches.
+function cleanup_git_branches() {
+    # Remove any remote-tracking branches that no longer exist on origin.
+    git remote prune origin
+    # Remove any local branches that have been merged into main.
+    git branch --merged main | grep -v '^[ *]*main$' | xargs  git branch -d
+}
