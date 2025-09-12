@@ -3,7 +3,7 @@
 	email = hlane@athenahealth.com
 [core]
 	excludesfile = ~/.gitignore
-	editor = emacs
+	editor = /Applications/Aquamacs.app/Contents/MacOS/Aquamacs
 	pager = less -R
 	autocrlf = input
 [alias]
