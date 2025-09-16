@@ -21,3 +21,9 @@
            path = ~/.athena_gitconfig
 [pull]
 	rebase = false
+[includeIf "gitdir:~/private/src/"]
+           path = ~/.personal_gitconfig
+[includeIf "gitdir:~/private/docs/"]
+           path = ~/.personal_gitconfig
+[init]
+	defaultBranch = main

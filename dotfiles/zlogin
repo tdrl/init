@@ -1,0 +1,10 @@
+# -*- shell-script -*-
+# If not running interactively, then don't do anything
+[ -z "$PS1" ] && return
+
+# First, configure environment variables and other system-specific
+# functionality (if it hasn't previously been executed)
+inittop="${HOME}/.init/sh/getenv"
+if [ -f "${inittop}" ]; then
+    . "${inittop}"
+fi

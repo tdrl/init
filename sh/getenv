@@ -38,9 +38,15 @@ if [ $DEBUG ]; then
    init::internal::popd() { popd ; }
    init::log::debug() { echo -e "$@"; }
 else
-   init::internal::pushd() { pushd $1 > /dev/null ; }
-   init::internal::popd() { popd > /dev/null ; }
-   init::log::debug() {}
+  if [[ "$OS_SHELL" == 'zsh' ]]; then
+    init::internal::pushd() { pushd -q $1 ; }
+    init::internal::popd() { popd -q ; }
+    init::log::debug() {}
+  else
+    init::internal::pushd() { pushd $1 > /dev/null ; }
+    init::internal::popd() { popd > /dev/null ; }
+    init::log::debug() {}
+  fi
 fi
 
 # Do the appropriate thing with a single file name.  Assumes that
@@ -87,14 +93,14 @@ init::internal::recurse() {
 
   # We're going node-then-children order, so handle the *files* in the current
   # directory first...
-  for name in [0-9][0-9].[FBRSX].*; do
+  for name in [0-9][0-9].[FBRSX].*(N); do
     if [[ -f ${name} && -r ${name} ]]; then
       init::internal::handle_fname ${name}
     fi
   done
 
   # Now recurse into directories.
-  for name in $(find . -depth 1 -type d -print); do
+  for name in $(find -L . -depth 1 -type d -print); do
       # Character classes don't seem to be handled, so hack it with alternation.
       if [[ -x "${name}" && "${dirlist}" =~ "(^| )${name#\./}( |$)" ]]; then
           init::log::debug "Recursing into ${name}"
