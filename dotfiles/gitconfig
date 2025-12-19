@@ -16,7 +16,7 @@
 [push]
 	default = simple
 [credential]
-	helper = osxkeychain
+	helper = store
 [includeIf "gitdir:~/work/"]
            path = ~/.athena_gitconfig
 [pull]
